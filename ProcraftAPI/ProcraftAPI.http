@@ -1,0 +1,6 @@
+@ProcraftAPI_HostAddress = http://localhost:5047
+
+GET {{ProcraftAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
