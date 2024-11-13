@@ -4,3 +4,7 @@
 
 /.vs/ProcraftAPI
 /.vs/ProjectEvaluation
+/obj/Docker
+/.vs
+/bin/Debug
+/obj/Debug
