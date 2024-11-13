@@ -1,0 +1,12 @@
+services:
+  procraftapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=6010
+      - ASPNETCORE_HTTPS_PORTS=6011
+    ports:
+      - 6010:6010
+      - 6011:6011
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

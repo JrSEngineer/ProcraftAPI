@@ -8,3 +8,5 @@
 /.vs
 /bin/Debug
 /obj/Debug
+**/Debug/
+**/obj/

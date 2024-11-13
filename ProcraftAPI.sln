@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcraftAPI", "ProcraftAPI\ProcraftAPI.csproj", "{165998D5-9D66-402D-8893-98C06AFBF1B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcraftAPI", "ProcraftAPI\ProcraftAPI.csproj", "{165998D5-9D66-402D-8893-98C06AFBF1B1}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{BB85CE8D-F58E-4FF8-8594-F62AF50B661C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{165998D5-9D66-402D-8893-98C06AFBF1B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{165998D5-9D66-402D-8893-98C06AFBF1B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{165998D5-9D66-402D-8893-98C06AFBF1B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB85CE8D-F58E-4FF8-8594-F62AF50B661C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB85CE8D-F58E-4FF8-8594-F62AF50B661C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB85CE8D-F58E-4FF8-8594-F62AF50B661C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB85CE8D-F58E-4FF8-8594-F62AF50B661C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

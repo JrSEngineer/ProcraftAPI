@@ -1,0 +1,9 @@
+services:
+  procraftapi:
+    container_name: procraft_api
+    build:
+      context: .
+      dockerfile: ProcraftAPI/Dockerfile.prod
+    ports:
+      - 6010:6010
+      - 6011:6011

@@ -1,0 +1,10 @@
+services:
+  procraftapi:
+    image: ${DOCKER_REGISTRY-}procraftapi
+    container_name: procraft_api
+    build:
+      context: .
+      dockerfile: ProcraftAPI/Dockerfile
+    ports:
+        - 7000:7000
+        - 7001:7001
