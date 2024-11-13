@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProcraftAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3e9402dcd59a2c05f9cef1e25e560cf93c446b15")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProcraftAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProcraftAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
