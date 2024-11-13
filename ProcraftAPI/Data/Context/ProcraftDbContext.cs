@@ -12,8 +12,6 @@ namespace ProcraftAPI.Data.Context
 
         public DbSet<ProcraftAuthentication> Authentication { get; set; }
 
-
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<ProcraftAuthentication>().HasKey(a => a.Email);

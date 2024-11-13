@@ -1,10 +1,29 @@
 services:
+  procraft-database:
+    container_name: procraft-database
+    image: postgres:15-bullseye
+    ports:
+    - 5432:5432
+    environment:
+        - POSTGRES_USER=jradmin
+        - POSTGRES_PASSWORD=5o23i4oaisdjf
+        - POSTGRES_DB=ProcraftDb
+
+    volumes:
+        - .pg_data:/var/lib/postgresql/pg_data
+
   procraftapi:
     image: ${DOCKER_REGISTRY-}procraftapi
-    container_name: procraft_api
+    container_name: procraft-api
     build:
       context: .
       dockerfile: ProcraftAPI/Dockerfile
     ports:
         - 7000:7000
         - 7001:7001
+    develop:
+      watch:
+        - path: ./
+          action: sync+restart
+          target: /app
+  
