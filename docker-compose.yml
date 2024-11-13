@@ -24,8 +24,7 @@ services:
     develop:
       watch:
         - path: ./
-          action: sync+restart
-          target: /app
+          action: rebuild
     environment:
         - SECURE_KEY="84592384askdjfaksjdq234"0980a80s98a0d9808iodfsxcvnafg;/sd]sfa[gpsdojpih8ahd]
   

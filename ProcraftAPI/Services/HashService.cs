@@ -29,6 +29,7 @@ namespace ProcraftAPI.Services
         public string HashValue(string value)
         {
             byte[] salt = RandomNumberGenerator.GetBytes(saltSize);
+
             byte[] hash = Rfc2898DeriveBytes.Pbkdf2(
                 value,
                 salt,

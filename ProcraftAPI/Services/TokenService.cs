@@ -24,6 +24,7 @@ namespace ProcraftAPI.Services
                     new Claim(ClaimTypes.PrimarySid, authentication.UserId.ToString()!),
                     new Claim(ClaimTypes.Email, authentication.Email),
                     new Claim(ClaimTypes.Role, authentication.Role.ToString()!),
+                    new Claim(ClaimTypes.Role, authentication.AccountStatus.ToString()!),
                     }
                 ),
                 Expires = DateTime.UtcNow.AddDays(7),

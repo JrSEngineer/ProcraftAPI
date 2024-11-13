@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProcraftAPI.Entities.User;
 using ProcraftAPI.Security.Authentication;
 
 namespace ProcraftAPI.Data.Context
@@ -11,6 +12,8 @@ namespace ProcraftAPI.Data.Context
         }
 
         public DbSet<ProcraftAuthentication> Authentication { get; set; }
+        public DbSet<ProcraftUser> User { get; set; }
+        public DbSet<UserAddress> Address { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
