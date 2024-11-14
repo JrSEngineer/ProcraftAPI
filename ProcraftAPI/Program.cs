@@ -140,6 +140,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapGet("test", () => DateTime.UtcNow);
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
