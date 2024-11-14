@@ -15,5 +15,5 @@ services:
       context: .
       dockerfile: ProcraftAPI/Dockerfile.prod
     ports:
-      - 6010:6010
-      - 6011:6011
+      - 6080:8080
+      - 6081:8081
