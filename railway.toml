@@ -1,0 +1,7 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "./ProcraftAPI/Dockerfile.prod"
+
+[deploy]
+startCommand = "dotnet Ibnt.dll"
+restarPolicyType = "never"
