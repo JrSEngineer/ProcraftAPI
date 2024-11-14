@@ -1,4 +1,5 @@
-﻿using ProcraftAPI.Dtos.Security;
+﻿using ProcraftAPI.Dtos.Process;
+using ProcraftAPI.Dtos.Security;
 using ProcraftAPI.Dtos.User.Address;
 
 namespace ProcraftAPI.Dtos.User;
@@ -13,4 +14,6 @@ public record UserDto
     public string Cpf { get; init; } = string.Empty;
     public AddressDto Address { get; init; } = null!;
     public AuthenticationDto Authentication { get; init; } = null!;
+
+    public List<ProcessListDto>? Processes { get; init; }
 }

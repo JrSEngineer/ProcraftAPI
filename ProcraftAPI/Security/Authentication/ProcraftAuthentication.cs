@@ -8,9 +8,9 @@ public class ProcraftAuthentication
 
     public string Password { get; set; } = string.Empty;
 
-    public UserRole Role { get; set; } = UserRole.user;
+    public UserRole Role { get; set; } = UserRole.User;
 
-    public AccountStatus AccountStatus { get; set; } = AccountStatus.basic;
+    public AccountStatus AccountStatus { get; set; } = AccountStatus.Basic;
 
     public Guid UserId { get; set; }
 }

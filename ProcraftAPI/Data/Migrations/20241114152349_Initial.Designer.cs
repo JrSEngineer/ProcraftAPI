@@ -12,8 +12,8 @@ using ProcraftAPI.Data.Context;
 namespace ProcraftAPI.Data.Migrations
 {
     [DbContext(typeof(ProcraftDbContext))]
-    [Migration("20241113173729_AddingUserAndAddressTables")]
-    partial class AddingUserAndAddressTables
+    [Migration("20241114152349_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,49 @@ namespace ProcraftAPI.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ProcraftAPI.Entities.Joins.ProcessUser", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProcessId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "ProcessId");
+
+                    b.HasIndex("ProcessId");
+
+                    b.ToTable("ProcessUser");
+                });
+
+            modelBuilder.Entity("ProcraftAPI.Entities.Process.ProcraftProcess", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("FinishedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Progress")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Process");
+                });
 
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
                 {
@@ -124,6 +167,40 @@ namespace ProcraftAPI.Data.Migrations
                     b.ToTable("Authentication");
                 });
 
+            modelBuilder.Entity("ProcraftProcessProcraftUser", b =>
+                {
+                    b.Property<Guid>("ProcessesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ProcessesId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("ProcraftProcessProcraftUser");
+                });
+
+            modelBuilder.Entity("ProcraftAPI.Entities.Joins.ProcessUser", b =>
+                {
+                    b.HasOne("ProcraftAPI.Entities.Process.ProcraftProcess", "Process")
+                        .WithMany("ProcessesUsers")
+                        .HasForeignKey("ProcessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProcraftAPI.Entities.User.ProcraftUser", "User")
+                        .WithMany("ProcessesUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Process");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
                 {
                     b.HasOne("ProcraftAPI.Entities.User.UserAddress", "Address")
@@ -141,6 +218,31 @@ namespace ProcraftAPI.Data.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("Authentication");
+                });
+
+            modelBuilder.Entity("ProcraftProcessProcraftUser", b =>
+                {
+                    b.HasOne("ProcraftAPI.Entities.Process.ProcraftProcess", null)
+                        .WithMany()
+                        .HasForeignKey("ProcessesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProcraftAPI.Entities.User.ProcraftUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProcraftAPI.Entities.Process.ProcraftProcess", b =>
+                {
+                    b.Navigation("ProcessesUsers");
+                });
+
+            modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
+                {
+                    b.Navigation("ProcessesUsers");
                 });
 #pragma warning restore 612, 618
         }

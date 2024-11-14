@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProcraftAPI.Data.Context;
+using ProcraftAPI.Dtos.Process;
 using ProcraftAPI.Dtos.Security;
 using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Dtos.User.Address;
@@ -135,6 +136,7 @@ public class AuthenticationController : ControllerBase
             .Where(u => u.Id == authenticationData.UserId)
             .Include(u => u.Authentication)
             .Include(u => u.Address)
+            .Include(u => u.Processes)
             .FirstOrDefaultAsync();
 
         var credentialOwner = new UserDto
@@ -162,7 +164,14 @@ public class AuthenticationController : ControllerBase
                 ZipCode = userData.Address.ZipCode,
                 Country = userData.Address.Country,
                 UserId = userData.Id,
-            }
+            },
+            Processes = userData.Processes?.Select(p => new ProcessListDto
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Description = p.Description,
+                Progress = p.Progress
+            }).ToList()
         };
 
         return Ok(credentialOwner);

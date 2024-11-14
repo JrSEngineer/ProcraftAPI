@@ -2,8 +2,8 @@
 {
     public enum AccountStatus
     {
-        basic,
-        pro,
-        premmium
+        Basic,
+        Pro,
+        Premmium
     }
 }
