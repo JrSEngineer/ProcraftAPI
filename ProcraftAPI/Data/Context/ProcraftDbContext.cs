@@ -10,7 +10,7 @@ namespace ProcraftAPI.Data.Context
     {
         public ProcraftDbContext(DbContextOptions<ProcraftDbContext> options) : base(options)
         {
-            bool pendingMigrationsFound = this.Database.GetAppliedMigrations().Any();
+            bool pendingMigrationsFound = this.Database.GetPendingMigrations().Any();
 
             if (pendingMigrationsFound) this.Database.Migrate();
         }
