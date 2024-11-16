@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProcraftAPI.Data.Context;
 using ProcraftAPI.Dtos.Process;
+using ProcraftAPI.Dtos.Process.Ability;
+using ProcraftAPI.Dtos.Process.Scope;
 using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Entities.Process;
 
@@ -25,11 +27,45 @@ public class ProcessesController : ControllerBase
     {
         Guid processId = Guid.NewGuid();
 
+        ProcessScope? scope = null;
+
+        ScopeDto? scopeDto = null;
+
+        if (dto.ScopeDto != null)
+        {
+            Guid scopedId = Guid.NewGuid();
+
+            scope = new ProcessScope
+            {
+                Id = scopedId,
+                Abilities = dto.ScopeDto.Abilities.Select(a => new ScopeAbility
+                {
+                    Id = Guid.NewGuid(),
+                    Name = a.Name,
+                    Description = a.Description,
+                    ScopeId = scopedId,
+                }).ToList()
+            };
+
+            scopeDto = new ScopeDto
+            {
+                Id = scope.Id,
+                Abilities = scope.Abilities.Select(a => new ScopeAbilityDto
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Description = a.Description,
+                    ScpoeId = a.ScopeId,
+                }).ToList()
+            };
+        }
+
         var processData = new ProcraftProcess
         {
             Id = processId,
             Title = dto.Title,
-            Description = dto.Description
+            Description = dto.Description,
+            Scope = scope
         };
 
         foreach (var user in dto.Users)
@@ -66,6 +102,7 @@ public class ProcessesController : ControllerBase
                 PhoneNumber = u.PhoneNumber,
                 Cpf = u.Cpf
             }).ToList(),
+            Scope = scopeDto
         };
 
         return Created($"{this.HttpContext.Request.Path}", newProcessDto);
