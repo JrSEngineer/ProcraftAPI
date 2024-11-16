@@ -19,8 +19,6 @@ namespace ProcraftAPI.Data.Context
         public DbSet<ProcraftUser> User { get; set; }
         public DbSet<UserAddress> Address { get; set; }
         public DbSet<ProcraftProcess> Process { get; set; }
-        public DbSet<ProcessScope> Scope { get; set; }
-        public DbSet<ScopeAbility> Ability { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
