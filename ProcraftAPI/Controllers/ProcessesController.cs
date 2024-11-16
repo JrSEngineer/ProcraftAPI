@@ -5,6 +5,7 @@ using ProcraftAPI.Data.Context;
 using ProcraftAPI.Dtos.Process;
 using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Entities.Process;
+using ProcraftAPI.Security.Enums;
 
 namespace ProcraftAPI.Controllers;
 
@@ -21,6 +22,7 @@ public class ProcessesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateProcessAsync([FromBody] NewProcessDto dto)
     {
         Guid processId = Guid.NewGuid();
@@ -39,7 +41,9 @@ public class ProcessesController : ControllerBase
         {
             Id = processId,
             Title = dto.Title,
-            Description = dto.Description
+            Description = dto.Description,
+            StartForecast = dto.StartForecast,
+            ConclusionForecast = dto.ConclusionForecast,
         };
 
         processData.Users.Add(user);
