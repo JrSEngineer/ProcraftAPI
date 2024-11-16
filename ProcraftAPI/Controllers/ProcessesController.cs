@@ -25,16 +25,6 @@ public class ProcessesController : ControllerBase
     {
         Guid processId = Guid.NewGuid();
 
-        var user = await _context.User.FindAsync(dto.UserId);
-
-        if (user == null)
-        {
-            return NotFound(new
-            {
-                Message = $"User with id {dto.UserId} not found."
-            });
-        }
-
         var processData = new ProcraftProcess
         {
             Id = processId,
@@ -42,7 +32,20 @@ public class ProcessesController : ControllerBase
             Description = dto.Description
         };
 
-        processData.Users.Add(user);
+        foreach (var user in dto.Users)
+        {
+            var processUser = await _context.User.FindAsync(user.UserId);
+
+            if (processUser == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"User with id {user.UserId} not found."
+                });
+            }
+
+            processData.Users.Add(processUser);
+        }
 
         await _context.Process.AddAsync(processData);
 

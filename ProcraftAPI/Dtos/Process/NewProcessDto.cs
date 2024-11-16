@@ -9,5 +9,5 @@ public record NewProcessDto
     public string Description { get; init; } = string.Empty;
 
     [Required(ErrorMessage = "Please, provide a valid user id.")]
-    public Guid UserId { get; init; }
+    public List<UserIdDto> Users { get; init; } = new List<UserIdDto>();
 }
