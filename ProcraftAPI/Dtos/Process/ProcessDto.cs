@@ -1,4 +1,5 @@
 ﻿using ProcraftAPI.Dtos.Process.Scope;
+using ProcraftAPI.Dtos.Process.Step;
 using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Enums;
 
@@ -12,4 +13,5 @@ public record ProcessDto
     public Progress Progress { get; init; }
     public List<UserListDto> Users { get; init; } = [];
     public ScopeDto? Scope { get; init; }
+    public List<StepDto> Steps { get; init; } = [];
 }

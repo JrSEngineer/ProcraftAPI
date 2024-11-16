@@ -5,8 +5,11 @@ using ProcraftAPI.Data.Context;
 using ProcraftAPI.Dtos.Process;
 using ProcraftAPI.Dtos.Process.Ability;
 using ProcraftAPI.Dtos.Process.Scope;
+using ProcraftAPI.Dtos.Process.Step;
 using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Entities.Process;
+using ProcraftAPI.Entities.Process.Scope;
+using ProcraftAPI.Entities.Process.Step;
 
 namespace ProcraftAPI.Controllers;
 
@@ -83,6 +86,23 @@ public class ProcessesController : ControllerBase
             processData.Users.Add(processUser);
         }
 
+        foreach (var step in dto.Steps)
+        {
+            Guid stepId = Guid.NewGuid();
+
+            var processStep = new ProcessStep
+            {
+                Id = stepId,
+                Title = step.Title,
+                Description = step.Description,
+                StartForecast = step.StartForecast,
+                FinishForecast = step.FinishForecast,
+                ProcessId = processId
+            };
+
+            processData.Steps.Add(processStep);
+        }
+
         await _context.Process.AddAsync(processData);
 
         await _context.SaveChangesAsync();
@@ -102,7 +122,16 @@ public class ProcessesController : ControllerBase
                 PhoneNumber = u.PhoneNumber,
                 Cpf = u.Cpf
             }).ToList(),
-            Scope = scopeDto
+            Scope = scopeDto,
+            Steps = processData.Steps.Select(s => new StepDto
+            {
+                Id = s.Id,
+                Title= s.Title,
+                Description = s.Description,
+                StartForecast = s.StartForecast,
+                FinishForecast = s.FinishForecast, 
+                ProcessId = processId
+            }).ToList(),
         };
 
         return Created($"{this.HttpContext.Request.Path}", newProcessDto);
@@ -111,7 +140,9 @@ public class ProcessesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetProcessesAsync()
     {
-        var processes = await _context.Process.ToListAsync();
+        var processes = await _context.Process
+                        .AsNoTracking()
+                        .ToListAsync();
 
         return Ok(processes);
     }
@@ -119,7 +150,13 @@ public class ProcessesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProcessByIdAsync(Guid id)
     {
-        var process = await _context.Process.FindAsync(id);
+        var process = await _context.Process
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Include(p => p.Users)
+            .Include(p => p.Scope)
+            .Include(p => p.Steps)
+            .FirstOrDefaultAsync();
 
         if (process == null)
         {

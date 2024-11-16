@@ -1,4 +1,4 @@
-﻿namespace ProcraftAPI.Entities.Process;
+﻿namespace ProcraftAPI.Entities.Process.Scope;
 
 public class ScopeAbility
 {
