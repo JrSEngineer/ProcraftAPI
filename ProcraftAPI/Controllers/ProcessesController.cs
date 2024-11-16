@@ -3,8 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProcraftAPI.Data.Context;
 using ProcraftAPI.Dtos.Process;
+using ProcraftAPI.Dtos.Process.Ability;
+using ProcraftAPI.Dtos.Process.Scope;
+using ProcraftAPI.Dtos.Process.Step;
 using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Entities.Process;
+using ProcraftAPI.Entities.Process.Scope;
+using ProcraftAPI.Entities.Process.Step;
 
 namespace ProcraftAPI.Controllers;
 
@@ -25,24 +30,78 @@ public class ProcessesController : ControllerBase
     {
         Guid processId = Guid.NewGuid();
 
-        var user = await _context.User.FindAsync(dto.UserId);
+        ProcessScope? scope = null;
 
-        if (user == null)
+        ScopeDto? scopeDto = null;
+
+        if (dto.ScopeDto != null)
         {
-            return NotFound(new
+            Guid scopedId = Guid.NewGuid();
+
+            scope = new ProcessScope
             {
-                Message = $"User with id {dto.UserId} not found."
-            });
+                Id = scopedId,
+                Abilities = dto.ScopeDto.Abilities.Select(a => new ScopeAbility
+                {
+                    Id = Guid.NewGuid(),
+                    Name = a.Name,
+                    Description = a.Description,
+                    ScopeId = scopedId,
+                }).ToList()
+            };
+
+            scopeDto = new ScopeDto
+            {
+                Id = scope.Id,
+                Abilities = scope.Abilities.Select(a => new ScopeAbilityDto
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Description = a.Description,
+                    ScpoeId = a.ScopeId,
+                }).ToList()
+            };
         }
 
         var processData = new ProcraftProcess
         {
             Id = processId,
             Title = dto.Title,
-            Description = dto.Description
+            Description = dto.Description,
+            Scope = scope
         };
 
-        processData.Users.Add(user);
+        foreach (var user in dto.Users)
+        {
+            var processUser = await _context.User.FindAsync(user.UserId);
+
+            if (processUser == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"User with id {user.UserId} not found."
+                });
+            }
+
+            processData.Users.Add(processUser);
+        }
+
+        foreach (var step in dto.Steps)
+        {
+            Guid stepId = Guid.NewGuid();
+
+            var processStep = new ProcessStep
+            {
+                Id = stepId,
+                Title = step.Title,
+                Description = step.Description,
+                StartForecast = step.StartForecast,
+                FinishForecast = step.FinishForecast,
+                ProcessId = processId
+            };
+
+            processData.Steps.Add(processStep);
+        }
 
         await _context.Process.AddAsync(processData);
 
@@ -63,6 +122,16 @@ public class ProcessesController : ControllerBase
                 PhoneNumber = u.PhoneNumber,
                 Cpf = u.Cpf
             }).ToList(),
+            Scope = scopeDto,
+            Steps = processData.Steps.Select(s => new StepDto
+            {
+                Id = s.Id,
+                Title= s.Title,
+                Description = s.Description,
+                StartForecast = s.StartForecast,
+                FinishForecast = s.FinishForecast, 
+                ProcessId = processId
+            }).ToList(),
         };
 
         return Created($"{this.HttpContext.Request.Path}", newProcessDto);
@@ -71,7 +140,9 @@ public class ProcessesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetProcessesAsync()
     {
-        var processes = await _context.Process.ToListAsync();
+        var processes = await _context.Process
+                        .AsNoTracking()
+                        .ToListAsync();
 
         return Ok(processes);
     }
@@ -79,7 +150,13 @@ public class ProcessesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetProcessByIdAsync(Guid id)
     {
-        var process = await _context.Process.FindAsync(id);
+        var process = await _context.Process
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Include(p => p.Users)
+            .Include(p => p.Scope)
+            .Include(p => p.Steps)
+            .FirstOrDefaultAsync();
 
         if (process == null)
         {

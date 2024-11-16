@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProcraftAPI.Data.Context;
@@ -11,9 +12,11 @@ using ProcraftAPI.Data.Context;
 namespace ProcraftAPI.Data.Migrations
 {
     [DbContext(typeof(ProcraftDbContext))]
-    partial class ProcraftDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241116182938_UpdatingProcessTable_AddingScopeAndAbilitesTables")]
+    partial class UpdatingProcessTable_AddingScopeAndAbilitesTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace ProcraftAPI.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ProcessStepProcraftUser", b =>
-                {
-                    b.Property<Guid>("StepsId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("StepsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ProcessStepProcraftUser");
-                });
 
             modelBuilder.Entity("ProcraftAPI.Entities.Joins.ProcessUser", b =>
                 {
@@ -52,19 +40,15 @@ namespace ProcraftAPI.Data.Migrations
                     b.ToTable("ProcessUser");
                 });
 
-            modelBuilder.Entity("ProcraftAPI.Entities.Joins.StepUser", b =>
+            modelBuilder.Entity("ProcraftAPI.Entities.Process.ProcessScope", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("StepId")
-                        .HasColumnType("uuid");
+                    b.HasKey("Id");
 
-                    b.HasKey("UserId", "StepId");
-
-                    b.HasIndex("StepId");
-
-                    b.ToTable("StepUser");
+                    b.ToTable("Scope");
                 });
 
             modelBuilder.Entity("ProcraftAPI.Entities.Process.ProcraftProcess", b =>
@@ -106,18 +90,7 @@ namespace ProcraftAPI.Data.Migrations
                     b.ToTable("Process");
                 });
 
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.Scope.ProcessScope", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Scope");
-                });
-
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.Scope.ScopeAbility", b =>
+            modelBuilder.Entity("ProcraftAPI.Entities.Process.ScopeAbility", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,86 +115,6 @@ namespace ProcraftAPI.Data.Migrations
                     b.HasIndex("ProcessScopeId");
 
                     b.ToTable("Ability");
-                });
-
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.Step.ProcessAction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("FinishForecast")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ProcessStepId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ProcraftUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Progress")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("StartForecast")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("StepId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProcessStepId");
-
-                    b.HasIndex("ProcraftUserId");
-
-                    b.ToTable("Action");
-                });
-
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.Step.ProcessStep", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("FinishForecast")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("ProcessId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ProcraftProcessId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Progress")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("StartForecast")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProcraftProcessId");
-
-                    b.ToTable("Step");
                 });
 
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
@@ -338,21 +231,6 @@ namespace ProcraftAPI.Data.Migrations
                     b.ToTable("ProcraftProcessProcraftUser");
                 });
 
-            modelBuilder.Entity("ProcessStepProcraftUser", b =>
-                {
-                    b.HasOne("ProcraftAPI.Entities.Process.Step.ProcessStep", null)
-                        .WithMany()
-                        .HasForeignKey("StepsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProcraftAPI.Entities.User.ProcraftUser", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ProcraftAPI.Entities.Joins.ProcessUser", b =>
                 {
                     b.HasOne("ProcraftAPI.Entities.Process.ProcraftProcess", "Process")
@@ -372,57 +250,20 @@ namespace ProcraftAPI.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ProcraftAPI.Entities.Joins.StepUser", b =>
-                {
-                    b.HasOne("ProcraftAPI.Entities.Process.Step.ProcessStep", "Step")
-                        .WithMany("SteUsers")
-                        .HasForeignKey("StepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProcraftAPI.Entities.User.ProcraftUser", "User")
-                        .WithMany("SteUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Step");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ProcraftAPI.Entities.Process.ProcraftProcess", b =>
                 {
-                    b.HasOne("ProcraftAPI.Entities.Process.Scope.ProcessScope", "Scope")
+                    b.HasOne("ProcraftAPI.Entities.Process.ProcessScope", "Scope")
                         .WithMany()
                         .HasForeignKey("ScopeId");
 
                     b.Navigation("Scope");
                 });
 
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.Scope.ScopeAbility", b =>
+            modelBuilder.Entity("ProcraftAPI.Entities.Process.ScopeAbility", b =>
                 {
-                    b.HasOne("ProcraftAPI.Entities.Process.Scope.ProcessScope", null)
+                    b.HasOne("ProcraftAPI.Entities.Process.ProcessScope", null)
                         .WithMany("Abilities")
                         .HasForeignKey("ProcessScopeId");
-                });
-
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.Step.ProcessAction", b =>
-                {
-                    b.HasOne("ProcraftAPI.Entities.Process.Step.ProcessStep", null)
-                        .WithMany("Actions")
-                        .HasForeignKey("ProcessStepId");
-
-                    b.HasOne("ProcraftAPI.Entities.User.ProcraftUser", null)
-                        .WithMany("Actions")
-                        .HasForeignKey("ProcraftUserId");
-                });
-
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.Step.ProcessStep", b =>
-                {
-                    b.HasOne("ProcraftAPI.Entities.Process.ProcraftProcess", null)
-                        .WithMany("Steps")
-                        .HasForeignKey("ProcraftProcessId");
                 });
 
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
@@ -459,32 +300,19 @@ namespace ProcraftAPI.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.ProcraftProcess", b =>
-                {
-                    b.Navigation("ProcessesUsers");
-
-                    b.Navigation("Steps");
-                });
-
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.Scope.ProcessScope", b =>
+            modelBuilder.Entity("ProcraftAPI.Entities.Process.ProcessScope", b =>
                 {
                     b.Navigation("Abilities");
                 });
 
-            modelBuilder.Entity("ProcraftAPI.Entities.Process.Step.ProcessStep", b =>
+            modelBuilder.Entity("ProcraftAPI.Entities.Process.ProcraftProcess", b =>
                 {
-                    b.Navigation("Actions");
-
-                    b.Navigation("SteUsers");
+                    b.Navigation("ProcessesUsers");
                 });
 
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
                 {
-                    b.Navigation("Actions");
-
                     b.Navigation("ProcessesUsers");
-
-                    b.Navigation("SteUsers");
                 });
 #pragma warning restore 612, 618
         }
