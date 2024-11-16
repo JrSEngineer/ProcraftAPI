@@ -11,6 +11,7 @@ services:
 
   procraftapi:
     container_name: procraft_api
+    image: devjrsoftwareengineer/procraft:v1
     build:
       context: .
       dockerfile: ProcraftAPI/Dockerfile.prod
