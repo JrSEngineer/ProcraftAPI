@@ -177,4 +177,17 @@ public class AuthenticationController : ControllerBase
         return Ok(credentialOwner);
     }
 
+    [HttpPost("token")]
+    public async Task<IActionResult> VerifyTokenAsync(TokenDto dto)
+    {
+        bool validToken = _tokenService.ValidateToken(dto.token);
+
+        if (!validToken)
+        {
+            return Unauthorized();
+        }
+
+        return Ok(dto);
+    }
+
 }
