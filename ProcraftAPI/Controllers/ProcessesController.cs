@@ -34,14 +34,14 @@ public class ProcessesController : ControllerBase
 
         ScopeDto? scopeDto = null;
 
-        if (dto.ScopeDto != null)
+        if (dto.Scope != null)
         {
             Guid scopedId = Guid.NewGuid();
 
             scope = new ProcessScope
             {
                 Id = scopedId,
-                Abilities = dto.ScopeDto.Abilities.Select(a => new ScopeAbility
+                Abilities = dto.Scope.Abilities.Select(a => new ScopeAbility
                 {
                     Id = Guid.NewGuid(),
                     Name = a.Name,

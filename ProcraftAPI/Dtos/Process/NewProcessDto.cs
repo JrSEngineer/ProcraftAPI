@@ -13,7 +13,7 @@ public record NewProcessDto
 
     [MinLength(1, ErrorMessage = "Plase, provide at least 1 member the project.")]
     public List<UserIdDto> Users { get; init; } = new List<UserIdDto>();
-    public NewScopeDto? ScopeDto { get; init; }
+    public NewScopeDto? Scope { get; init; }
 
     [MinLength(1, ErrorMessage = "Plase, provide at least 1 initial step to the project.")]
     public List<NewStepDto> Steps { get; init; } = new List<NewStepDto>();
