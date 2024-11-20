@@ -31,6 +31,8 @@ namespace ProcraftAPI.Data.Context
         {
             builder.Entity<ProcraftAuthentication>().HasKey(a => a.Email);
 
+            builder.Entity<ProcraftProcess>().HasMany(p => p.Steps).WithOne().OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<ProcessUser>().HasKey(pU => new { pU.UserId, pU.ProcessId });
 
             builder.Entity<StepUser>().HasKey(sU => new { sU.UserId, sU.StepId});
