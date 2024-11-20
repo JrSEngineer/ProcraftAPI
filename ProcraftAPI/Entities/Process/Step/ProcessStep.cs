@@ -14,6 +14,6 @@ public class ProcessStep
     public DateTime FinishForecast { get; set; }
     public Guid ProcessId { get; set; }
     public List<ProcessAction>? Actions { get; set; } = new List<ProcessAction>();
-    public List<StepUser> SteUsers { get; set; } = new List<StepUser>();
+    public List<StepUser> StepUsers { get; set; } = new List<StepUser>();
     public List<ProcraftUser>? Users { get; set; } = new List<ProcraftUser>();
 }
