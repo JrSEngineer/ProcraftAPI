@@ -83,7 +83,7 @@ public class UsersController : ControllerBase
 
         var userDtos = users.Select(u => new UserListDto
         {
-            Id=u.Id,
+            Id = u.Id,
             FullName = u.FullName,
             ProfileImage = u.ProfileImage,
             Description = u.Description,
@@ -92,5 +92,33 @@ public class UsersController : ControllerBase
         }).ToList();
 
         return Ok(userDtos);
+    }
+
+    [HttpGet("{id}/processes")]
+    public async Task<IActionResult> GetUserProcessesAsync(Guid id)
+    {
+        var user = await _context.User
+            .AsNoTracking()
+            .Include(u => u.Processes)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (user == null)
+        {
+            return NotFound(new
+            {
+                Message = $"User with id {id} not found."
+            });
+        }
+
+
+        var processes = user?.Processes.Select(p => new ProcessListDto
+        {
+            Id = p.Id,
+            Title = p.Title,
+            Description = p.Description,
+            Progress = p.Progress
+        }).ToList();
+
+        return Ok(processes);
     }
 }
