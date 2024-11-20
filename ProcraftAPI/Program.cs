@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -8,12 +9,21 @@ using ProcraftAPI.Interfaces;
 using ProcraftAPI.Services;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var settings = builder.Configuration.GetSection("Procraft").Get<ProcraftSettings>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("procraft-policy", builder =>
+    {
+        builder.WithHeaders()
+               .WithOrigins("br.com.procraft", "", "")
+               .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH");
+    });
+});
 
 if (builder.Environment.IsDevelopment())
 {
@@ -104,7 +114,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;   
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -146,6 +156,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet("test", () => DateTime.UtcNow);
+
+app.UseCors("procraft-policy");
 
 app.UseHttpsRedirection();
 
