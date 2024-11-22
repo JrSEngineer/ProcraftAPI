@@ -155,7 +155,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("test", () => DateTime.UtcNow);
+app.MapGet("test", () => $"API NOW RUNNING -- {DateTime.UtcNow} --");
 
 app.UseCors("procraft-policy");
 
