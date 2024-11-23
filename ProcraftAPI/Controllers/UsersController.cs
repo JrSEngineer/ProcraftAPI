@@ -121,7 +121,7 @@ public class UsersController : ControllerBase
                 Title = p.Title,
                 Description = p.Description,
                 Progress = p.Progress,
-                FinishedStepsProcentage = finishedStepsPorcentage,
+                FinishedStepsPorcentage = finishedStepsPorcentage,
             };
         }).ToList();
 

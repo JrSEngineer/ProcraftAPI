@@ -7,5 +7,5 @@ public class ProcessListDto
     public string Title { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
     public Progress Progress { get; init; }
-    public double FinishedStepsProcentage { get; init; }
+    public double FinishedStepsPorcentage { get; init; }
 }
