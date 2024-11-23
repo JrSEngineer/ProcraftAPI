@@ -1,11 +1,10 @@
 ﻿using ProcraftAPI.Enums;
-namespace ProcraftAPI.Dtos.Process;
 
-public class ProcessListDto
+namespace ProcraftAPI.Dtos.Process.Step;
+
+public record UpdateStepDto
 {
-    public Guid Id { get; init; }
     public string Title { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
     public Progress Progress { get; init; }
-    public double FinishedStepsProcentage { get; init; }
 }

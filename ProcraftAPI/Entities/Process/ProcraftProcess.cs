@@ -19,4 +19,22 @@ public class ProcraftProcess
     public List<ProcraftUser> Users { get; set; } = new List<ProcraftUser>();
     public ProcessScope? Scope { get; set; }
     public List<ProcessStep> Steps { get; set; } = new List<ProcessStep>();
+
+    public double CalculateProocessProgressPorcentage()
+    {
+        int totalStepsCount = Steps.Count();
+
+        if(totalStepsCount == 0)
+        {
+            return 0;
+        }
+
+        var finishedSteps = Steps.Where((step) => step.Progress == Progress.Finished).ToList();
+
+        int finishedStepsCount = finishedSteps.Count() * 100;
+
+        int finishedStepsPorcentage = finishedStepsCount / totalStepsCount;
+
+        return (double)finishedStepsPorcentage;
+    }
 }

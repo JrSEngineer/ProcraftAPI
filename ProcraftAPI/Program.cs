@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -155,7 +154,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapGet("test", () => DateTime.UtcNow);
+app.MapGet("test", () => $"API NOW RUNNING -- {DateTime.UtcNow} --");
 
 app.UseCors("procraft-policy");
 

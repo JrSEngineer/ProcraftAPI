@@ -100,6 +100,7 @@ public class UsersController : ControllerBase
         var user = await _context.User
             .AsNoTracking()
             .Include(u => u.Processes)
+            .ThenInclude(p => p.Steps)
             .FirstOrDefaultAsync(u => u.Id == id);
 
         if (user == null)
@@ -111,12 +112,17 @@ public class UsersController : ControllerBase
         }
 
 
-        var processes = user?.Processes.Select(p => new ProcessListDto
-        {
-            Id = p.Id,
-            Title = p.Title,
-            Description = p.Description,
-            Progress = p.Progress
+        var processes = user?.Processes.Select(p => {
+            double finishedStepsPorcentage = (double)p.CalculateProocessProgressPorcentage();
+
+            return new ProcessListDto
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Description = p.Description,
+                Progress = p.Progress,
+                FinishedStepsProcentage = finishedStepsPorcentage,
+            };
         }).ToList();
 
         return Ok(processes);
