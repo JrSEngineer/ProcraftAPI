@@ -126,10 +126,10 @@ public class ProcessesController : ControllerBase
             Steps = processData.Steps.Select(s => new StepDto
             {
                 Id = s.Id,
-                Title= s.Title,
+                Title = s.Title,
                 Description = s.Description,
                 StartForecast = s.StartForecast,
-                FinishForecast = s.FinishForecast, 
+                FinishForecast = s.FinishForecast,
                 ProcessId = processId
             }).ToList(),
         };
@@ -185,6 +185,44 @@ public class ProcessesController : ControllerBase
         process.Title = dto.Title;
         process.Description = dto.Description;
         process.Progress = dto.Progress;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(process);
+    }
+
+    [HttpPatch("{id}/step/{stepId}")]
+    public async Task<IActionResult> UpdateProcessStep(Guid id, Guid stepId, UpdateStepDto dto)
+    {
+        var process = await _context.Process
+            .AsNoTracking()
+            .Where(p => p.Id == id)
+            .Include(p => p.Steps)
+            .FirstOrDefaultAsync();
+
+        if (process == null)
+        {
+            return NotFound(new
+            {
+                Message = $"Process with id {id} not found."
+            });
+        }
+
+        bool stepFoundInCurrentProcess = process.Steps.Any(s => s.Id == stepId);
+
+        if (!stepFoundInCurrentProcess)
+        {
+            return NotFound(new
+            {
+                Message = $"Step with id {id} not found in current process."
+            });
+        }
+
+        var step = await _context.Step.FindAsync(stepId);
+
+        step.Title = dto.Title;
+        step.Description = dto.Description;
+        step.Progress = dto.Progress;
 
         await _context.SaveChangesAsync();
 
