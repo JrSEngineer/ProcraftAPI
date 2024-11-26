@@ -168,6 +168,8 @@ public class AuthenticationController : ControllerBase
             .Include(u => u.Authentication)
             .Include(u => u.Address)
             .Include(u => u.Processes)
+            .Include(u => u.Steps)
+            .Include(u => u.Actions)
             .FirstOrDefaultAsync();
 
         var credentialOwner = new UserDto
