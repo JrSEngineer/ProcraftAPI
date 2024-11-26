@@ -38,6 +38,8 @@ namespace ProcraftAPI.Data.Context
 
             builder.Entity<ProcraftUser>().HasMany(u => u.Actions).WithOne().HasForeignKey(u => u.UserId).OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<ProcessStep>().HasMany(u => u.Actions).WithOne().HasForeignKey(a => a.StepId).OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<ProcessUser>().HasKey(pU => new { pU.UserId, pU.ProcessId });
 
             builder.Entity<StepUser>().HasKey(sU => new { sU.UserId, sU.StepId});
