@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using ProcraftAPI.Data.Context;
 using ProcraftAPI.Dtos.Process;
+using ProcraftAPI.Dtos.Process.Step.Action;
+using ProcraftAPI.Dtos.Process.Step;
 using ProcraftAPI.Dtos.Security;
 using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Dtos.User.Address;
@@ -97,7 +99,34 @@ public class AuthenticationController : ControllerBase
                 Country = userData.Address.Country,
                 UserId = userData.Id,
 
-            }
+            },
+            Processes = userData.Processes?.Select(p => new ProcessListDto
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Description = p.Description,
+                Progress = p.Progress
+            }).ToList(),
+            Steps = userData.Steps?.Select(s => new StepListDto
+            {
+                Id = s.Id,
+                Title = s.Title,
+                Description = s.Description,
+                Progress = s.Progress,
+                StartForecast = s.StartForecast,
+                FinishForecast = s.FinishForecast,
+                ProcessId = s.Id,
+            }).ToList(),
+            Actions = userData.Actions?.Select(a => new ActionDto
+            {
+                Id = a.Id,
+                Title = a.Title,
+                Description = a.Description,
+                Progress = a.Progress,
+                Duration = a.Duration,
+                UserId = a.UserId,
+                StepId = a.StepId,
+            }).ToList(),
         };
 
         return Created($"{this.HttpContext.Request.Path}", createdUserDto);

@@ -17,7 +17,7 @@ public record UserDto
     public AddressDto Address { get; init; } = null!;
     public AuthenticationDto Authentication { get; init; } = null!;
 
-    public List<ProcessListDto>? Processes { get; init; }
-    public List<StepListDto>? Steps { get; init; }
-    public List<ActionDto>? Actions { get; init; }
+    public List<ProcessListDto>? Processes { get; init; } = new List<ProcessListDto>();
+    public List<StepListDto>? Steps { get; init; } = new List<StepListDto>();
+    public List<ActionDto>? Actions { get; init; } = new List<ActionDto>();
 }
