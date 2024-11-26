@@ -89,8 +89,6 @@ var secureKey = Environment.GetEnvironmentVariable("SECURE_KEY") ?? "";
 
 var secretServerKey = Encoding.UTF8.GetBytes(secureKey);
 
-builder.Services.AddAuthorization();
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -108,6 +106,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false,
     };
 });
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 

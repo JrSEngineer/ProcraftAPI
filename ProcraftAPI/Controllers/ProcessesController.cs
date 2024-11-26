@@ -25,9 +25,25 @@ public class ProcessesController : ControllerBase
         _context = context;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateProcessAsync([FromBody] NewProcessDto dto)
+    [Authorize(Roles = "Admin")]
+    [HttpPost("{groupId}")]
+    public async Task<IActionResult> CreateProcessAsync(Guid groupId, [FromBody] NewProcessDto dto)
     {
+        var group = await _context.Group
+                    .Where(g => g.Id == groupId)
+                    .Include(g => g.Members)
+                    .FirstOrDefaultAsync();
+
+        if (group == null)
+        {
+            return NotFound(new
+            {
+                Message = $"Group ith id {groupId} not found."
+            });
+        }
+
+        var usersList = group.Members.ToList();
+
         Guid processId = Guid.NewGuid();
 
         ProcessScope? scope = null;
@@ -73,13 +89,13 @@ public class ProcessesController : ControllerBase
 
         foreach (var user in dto.Users)
         {
-            var processUser = await _context.User.FindAsync(user.UserId);
+            var processUser = usersList.Find(u => u.Id == user.UserId);
 
             if (processUser == null)
             {
                 return NotFound(new
                 {
-                    Message = $"User with id {user.UserId} not found."
+                    Message = $"User with id {user.UserId} not found in current group."
                 });
             }
 
@@ -137,6 +153,145 @@ public class ProcessesController : ControllerBase
         return Created($"{this.HttpContext.Request.Path}", newProcessDto);
     }
 
+    [Authorize(Roles = "Admin")]
+    [HttpPost("{processId}/group/{groupId}/users")]
+    public async Task<IActionResult> AddMemberToProcessAsync(Guid processId, Guid groupId, [FromBody] List<UserIdDto> dtoList)
+    {
+        var group = await _context.Group
+           .AsNoTracking()
+           .Where(g => g.Id == groupId)
+           .Include(g => g.Members)
+           .FirstOrDefaultAsync();
+
+        if (group == null)
+        {
+            return NotFound(new
+            {
+                Message = $"Group with id {groupId} not found."
+            });
+        }
+
+        var process = await _context.Process
+            .Where(p => p.Id == processId)
+            .Include(p => p.Users)
+            .Include(p => p.Scope)
+            .Include(p => p.Steps)
+            .FirstOrDefaultAsync();
+
+        if (process == null)
+        {
+            return NotFound(new
+            {
+                Message = $"Process with id {processId} not found."
+            });
+        }
+
+        foreach (var dto in dtoList)
+        {
+            var user = group.Members.Find(u => u.Id == dto.UserId);
+
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"User with id {dto.UserId} not found in current group."
+                });
+            }
+
+            bool userAlreadyPresentInCurrentProcess = process.Users.Any(u => u.Id == user.Id);
+
+            if (userAlreadyPresentInCurrentProcess)
+            {
+                return BadRequest(new
+                {
+                    Message = $"User with id {user.Id} already present in current process."
+                });
+            }
+
+            process!.Users.Add(user);
+        }
+
+        await _context.SaveChangesAsync();
+
+        var scopeDto = new ScopeDto
+        {
+            Id = process!.Scope.Id,
+            Abilities = process.Scope.Abilities.Select(a => new ScopeAbilityDto
+            {
+                Id = a.Id,
+                Name = a.Name,
+                Description = a.Description,
+                ScpoeId = a.ScopeId,
+            }).ToList()
+        };
+
+        var processDto = new ProcessDto
+        {
+            Id = process.Id,
+            Title = process.Title,
+            Description = process.Description,
+            Progress = process.Progress,
+            Users = process.Users.Select(u => new UserListDto
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                ProfileImage = u.ProfileImage,
+                Description = u.Description,
+                PhoneNumber = u.PhoneNumber,
+                Cpf = u.Cpf
+            }).ToList(),
+            Scope = scopeDto,
+            Steps = process.Steps.Select(s => new StepDto
+            {
+                Id = s.Id,
+                Title = s.Title,
+                Description = s.Description,
+                StartForecast = s.StartForecast,
+                FinishForecast = s.FinishForecast,
+                ProcessId = process.Id
+            }).ToList(),
+        };
+
+        return Ok(processDto);
+    }
+
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("{processId}/users/{userId}")]
+    public async Task<IActionResult> RemoveMemberFromProcessAsync(Guid processId, Guid userId)
+    {
+        var process = await _context.Process
+           .Where(p => p.Id == processId)
+           .Include(p => p.Users)
+           .Include(p => p.Scope)
+           .Include(p => p.Steps)
+           .FirstOrDefaultAsync();
+
+        if (process == null)
+        {
+            return NotFound(new
+            {
+                Message = $"Process with id {processId} not found."
+            });
+        }
+
+        var user = process.Users.Find(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return NotFound(new
+            {
+                Message = $"User with id {userId} not found."
+            });
+        }
+
+        process!.Users.Remove(user);
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetProcessesAsync()
     {
@@ -169,16 +324,86 @@ public class ProcessesController : ControllerBase
         return Ok(process);
     }
 
-    [HttpPatch("{id}")]
-    public async Task<IActionResult> UpdateProcess(Guid id, UpdateProcessDto dto)
+    [HttpPost("{processId}/steps")]
+    public async Task<IActionResult> AddStepAsync(Guid processId, [FromBody] List<NewStepDto> dtosList)
     {
-        var process = await _context.Process.FindAsync(id);
+        var process = await _context.Process.FindAsync(processId);
 
         if (process == null)
         {
             return NotFound(new
             {
-                Message = $"Process with id {id} not found."
+                Message = $"Process with id {processId} not found."
+            });
+        }
+
+        foreach (var dto in dtosList)
+        {
+            var stepId = Guid.NewGuid();
+
+            var newStep = new ProcessStep
+            {
+                Id = stepId,
+                Title = dto.Title,
+                Description = dto.Description,
+                StartForecast = dto.StartForecast,
+                FinishForecast = dto.FinishForecast,
+                ProcessId = processId
+            };
+
+            _context.Step.Add(newStep);
+        }
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new { Message = dtosList.Count() > 1 ? $"{dtosList.Count()} new steps added." : $"{dtosList.Count()} new step added." });
+    }
+
+    [HttpDelete("{processId}/step/{stepId}")]
+    public async Task<IActionResult> DeleteStepAsync(Guid processId, Guid stepId)
+    {
+        var process = await _context.Process
+            .Where(p => p.Id == processId)
+            .Include(p => p.Users)
+            .Include(p => p.Scope)
+            .Include(p => p.Steps)
+            .FirstOrDefaultAsync();
+
+        if (process == null)
+        {
+            return NotFound(new
+            {
+                Message = $"Process with id {processId} not found."
+            });
+        }
+
+        var step = process.Steps.Find(s => s.Id == stepId);
+
+        if (step == null)
+        {
+            return BadRequest(new
+            {
+                Message = $"Step with id {stepId} not present in current process."
+            });
+        }
+
+        process.Steps.Remove(step);
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpPatch("{processId}")]
+    public async Task<IActionResult> UpdateProcess(Guid processId, UpdateProcessDto dto)
+    {
+        var process = await _context.Process.FindAsync(processId);
+
+        if (process == null)
+        {
+            return NotFound(new
+            {
+                Message = $"Process with id {processId} not found."
             });
         }
 
@@ -229,6 +454,7 @@ public class ProcessesController : ControllerBase
         return Ok(process);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProcess(Guid id)
     {

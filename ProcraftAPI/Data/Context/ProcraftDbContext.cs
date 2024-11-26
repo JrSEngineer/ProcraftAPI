@@ -18,6 +18,7 @@ namespace ProcraftAPI.Data.Context
         }
 
         public DbSet<ProcraftAuthentication> Authentication { get; set; }
+        public DbSet<ProcraftGroup> Group { get; set; }
         public DbSet<ProcraftUser> User { get; set; }
         public DbSet<UserAddress> Address { get; set; }
         public DbSet<ProcraftProcess> Process { get; set; }
@@ -29,9 +30,11 @@ namespace ProcraftAPI.Data.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<ProcraftGroup>().HasMany(g => g.Members).WithOne().HasForeignKey(m => m.GroupId);
+
             builder.Entity<ProcraftAuthentication>().HasKey(a => a.Email);
 
-            builder.Entity<ProcraftProcess>().HasMany(p => p.Steps).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<ProcraftProcess>().HasMany(p => p.Steps).WithOne(s => s.Process).HasForeignKey(s => s.ProcessId).OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ProcessUser>().HasKey(pU => new { pU.UserId, pU.ProcessId });
 

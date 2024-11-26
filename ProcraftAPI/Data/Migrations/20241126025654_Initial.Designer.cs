@@ -12,8 +12,8 @@ using ProcraftAPI.Data.Context;
 namespace ProcraftAPI.Data.Migrations
 {
     [DbContext(typeof(ProcraftDbContext))]
-    [Migration("20241116200504_CreatingStepActionAndStepUserTables")]
-    partial class CreatingStepActionAndStepUserTables
+    [Migration("20241126025654_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -207,9 +207,6 @@ namespace ProcraftAPI.Data.Migrations
                     b.Property<Guid>("ProcessId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("ProcraftProcessId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("Progress")
                         .HasColumnType("integer");
 
@@ -222,9 +219,24 @@ namespace ProcraftAPI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProcraftProcessId");
+                    b.HasIndex("ProcessId");
 
                     b.ToTable("Step");
+                });
+
+            modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Group");
                 });
 
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
@@ -252,6 +264,9 @@ namespace ProcraftAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("text");
@@ -266,6 +281,8 @@ namespace ProcraftAPI.Data.Migrations
 
                     b.HasIndex("AuthenticationEmail");
 
+                    b.HasIndex("GroupId");
+
                     b.ToTable("User");
                 });
 
@@ -274,6 +291,9 @@ namespace ProcraftAPI.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<int>("AddressNumber")
+                        .HasColumnType("integer");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -378,13 +398,13 @@ namespace ProcraftAPI.Data.Migrations
             modelBuilder.Entity("ProcraftAPI.Entities.Joins.StepUser", b =>
                 {
                     b.HasOne("ProcraftAPI.Entities.Process.Step.ProcessStep", "Step")
-                        .WithMany("SteUsers")
+                        .WithMany("StepUsers")
                         .HasForeignKey("StepId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ProcraftAPI.Entities.User.ProcraftUser", "User")
-                        .WithMany("SteUsers")
+                        .WithMany("StepUsers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -423,9 +443,13 @@ namespace ProcraftAPI.Data.Migrations
 
             modelBuilder.Entity("ProcraftAPI.Entities.Process.Step.ProcessStep", b =>
                 {
-                    b.HasOne("ProcraftAPI.Entities.Process.ProcraftProcess", null)
+                    b.HasOne("ProcraftAPI.Entities.Process.ProcraftProcess", "Process")
                         .WithMany("Steps")
-                        .HasForeignKey("ProcraftProcessId");
+                        .HasForeignKey("ProcessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Process");
                 });
 
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
@@ -439,6 +463,12 @@ namespace ProcraftAPI.Data.Migrations
                     b.HasOne("ProcraftAPI.Security.Authentication.ProcraftAuthentication", "Authentication")
                         .WithMany()
                         .HasForeignKey("AuthenticationEmail")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProcraftAPI.Entities.User.ProcraftGroup", null)
+                        .WithMany("Members")
+                        .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -478,7 +508,12 @@ namespace ProcraftAPI.Data.Migrations
                 {
                     b.Navigation("Actions");
 
-                    b.Navigation("SteUsers");
+                    b.Navigation("StepUsers");
+                });
+
+            modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftGroup", b =>
+                {
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
@@ -487,7 +522,7 @@ namespace ProcraftAPI.Data.Migrations
 
                     b.Navigation("ProcessesUsers");
 
-                    b.Navigation("SteUsers");
+                    b.Navigation("StepUsers");
                 });
 #pragma warning restore 612, 618
         }

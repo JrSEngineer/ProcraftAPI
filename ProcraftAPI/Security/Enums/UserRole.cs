@@ -1,8 +1,7 @@
-﻿namespace ProcraftAPI.Security.Enums
+﻿namespace ProcraftAPI.Security.Enums;
+
+public enum UserRole
 {
-    public enum UserRole
-    {
-        User,
-        Admin
-    }
+    User,
+    Admin
 }

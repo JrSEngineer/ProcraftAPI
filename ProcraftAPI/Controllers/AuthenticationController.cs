@@ -43,6 +43,7 @@ public class AuthenticationController : ControllerBase
             Description = dto.Description,
             PhoneNumber = dto.PhoneNumber,
             Cpf = dto.Cpf,
+            GroupId = dto.GroupId,
             Authentication = new ProcraftAuthentication
             {
                 Email = dto.Authentication.Email,

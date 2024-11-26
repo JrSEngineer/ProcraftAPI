@@ -1,9 +1,8 @@
-﻿namespace ProcraftAPI.Security.Enums
+﻿namespace ProcraftAPI.Security.Enums;
+
+public enum AccountStatus
 {
-    public enum AccountStatus
-    {
-        Basic,
-        Pro,
-        Premmium
-    }
+    Basic,
+    Pro,
+    Premmium
 }

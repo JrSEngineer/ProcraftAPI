@@ -12,7 +12,8 @@ public class ProcessStep
     public Progress Progress { get; set; } = Progress.Created;
     public DateTime StartForecast { get; set; }
     public DateTime FinishForecast { get; set; }
-    public Guid? ProcessId { get; set; }
+    public Guid ProcessId { get; set; }
+    public ProcraftProcess Process { get; set; } = null!;
     public List<ProcessAction>? Actions { get; set; } = new List<ProcessAction>();
     public List<StepUser> StepUsers { get; set; } = new List<StepUser>();
     public List<ProcraftUser>? Users { get; set; } = new List<ProcraftUser>();
