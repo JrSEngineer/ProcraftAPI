@@ -1,6 +1,6 @@
 ﻿using ProcraftAPI.Enums;
 
-namespace ProcraftAPI.Dtos.Process.Step
+namespace ProcraftAPI.Dtos.Process.Step.Action
 {
     public class ActionDto
     {
@@ -8,9 +8,8 @@ namespace ProcraftAPI.Dtos.Process.Step
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Progress Progress { get; set; } = Progress.Created;
-        public DateTime StartForecast { get; set; }
-        public DateTime FinishForecast { get; set; }
-        public Guid StepId { get; set; }
+        public TimeSpan? Duration { get; set; }
         public Guid UserId { get; set; }
+        public Guid StepId { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProcraftAPI.Data.Context;
@@ -11,9 +12,11 @@ using ProcraftAPI.Data.Context;
 namespace ProcraftAPI.Data.Migrations
 {
     [DbContext(typeof(ProcraftDbContext))]
-    partial class ProcraftDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241126132528_UpdatingActionTableProperties")]
+    partial class UpdatingActionTableProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,6 +163,9 @@ namespace ProcraftAPI.Data.Migrations
                     b.Property<Guid?>("ProcessStepId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("ProcraftUserId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Progress")
                         .HasColumnType("integer");
 
@@ -177,7 +183,7 @@ namespace ProcraftAPI.Data.Migrations
 
                     b.HasIndex("ProcessStepId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ProcraftUserId");
 
                     b.ToTable("Action");
                 });
@@ -429,9 +435,7 @@ namespace ProcraftAPI.Data.Migrations
 
                     b.HasOne("ProcraftAPI.Entities.User.ProcraftUser", null)
                         .WithMany("Actions")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProcraftUserId");
                 });
 
             modelBuilder.Entity("ProcraftAPI.Entities.Process.Step.ProcessStep", b =>

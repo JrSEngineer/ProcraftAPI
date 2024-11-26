@@ -87,15 +87,15 @@ public class ProcessesController : ControllerBase
             Scope = scope
         };
 
-        foreach (var user in dto.Users)
+        foreach (var userIdDto in dto.Users)
         {
-            var processUser = usersList.Find(u => u.Id == user.UserId);
+            var processUser = usersList.Find(u => u.Id == userIdDto.UserId);
 
             if (processUser == null)
             {
                 return NotFound(new
                 {
-                    Message = $"User with id {user.UserId} not found in current group."
+                    Message = $"User with id {userIdDto.UserId} not found in current group."
                 });
             }
 
@@ -324,76 +324,6 @@ public class ProcessesController : ControllerBase
         return Ok(process);
     }
 
-    [HttpPost("{processId}/steps")]
-    public async Task<IActionResult> AddStepAsync(Guid processId, [FromBody] List<NewStepDto> dtosList)
-    {
-        var process = await _context.Process.FindAsync(processId);
-
-        if (process == null)
-        {
-            return NotFound(new
-            {
-                Message = $"Process with id {processId} not found."
-            });
-        }
-
-        foreach (var dto in dtosList)
-        {
-            var stepId = Guid.NewGuid();
-
-            var newStep = new ProcessStep
-            {
-                Id = stepId,
-                Title = dto.Title,
-                Description = dto.Description,
-                StartForecast = dto.StartForecast,
-                FinishForecast = dto.FinishForecast,
-                ProcessId = processId
-            };
-
-            _context.Step.Add(newStep);
-        }
-
-        await _context.SaveChangesAsync();
-
-        return Ok(new { Message = dtosList.Count() > 1 ? $"{dtosList.Count()} new steps added." : $"{dtosList.Count()} new step added." });
-    }
-
-    [HttpDelete("{processId}/step/{stepId}")]
-    public async Task<IActionResult> DeleteStepAsync(Guid processId, Guid stepId)
-    {
-        var process = await _context.Process
-            .Where(p => p.Id == processId)
-            .Include(p => p.Users)
-            .Include(p => p.Scope)
-            .Include(p => p.Steps)
-            .FirstOrDefaultAsync();
-
-        if (process == null)
-        {
-            return NotFound(new
-            {
-                Message = $"Process with id {processId} not found."
-            });
-        }
-
-        var step = process.Steps.Find(s => s.Id == stepId);
-
-        if (step == null)
-        {
-            return BadRequest(new
-            {
-                Message = $"Step with id {stepId} not present in current process."
-            });
-        }
-
-        process.Steps.Remove(step);
-
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
     [HttpPatch("{processId}")]
     public async Task<IActionResult> UpdateProcess(Guid processId, UpdateProcessDto dto)
     {
@@ -410,44 +340,6 @@ public class ProcessesController : ControllerBase
         process.Title = dto.Title;
         process.Description = dto.Description;
         process.Progress = dto.Progress;
-
-        await _context.SaveChangesAsync();
-
-        return Ok(process);
-    }
-
-    [HttpPatch("{id}/step/{stepId}")]
-    public async Task<IActionResult> UpdateProcessStep(Guid id, Guid stepId, UpdateStepDto dto)
-    {
-        var process = await _context.Process
-            .AsNoTracking()
-            .Where(p => p.Id == id)
-            .Include(p => p.Steps)
-            .FirstOrDefaultAsync();
-
-        if (process == null)
-        {
-            return NotFound(new
-            {
-                Message = $"Process with id {id} not found."
-            });
-        }
-
-        bool stepFoundInCurrentProcess = process.Steps.Any(s => s.Id == stepId);
-
-        if (!stepFoundInCurrentProcess)
-        {
-            return NotFound(new
-            {
-                Message = $"Step with id {id} not found in current process."
-            });
-        }
-
-        var step = await _context.Step.FindAsync(stepId);
-
-        step.Title = dto.Title;
-        step.Description = dto.Description;
-        step.Progress = dto.Progress;
 
         await _context.SaveChangesAsync();
 

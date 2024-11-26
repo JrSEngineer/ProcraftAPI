@@ -1,10 +1,8 @@
-﻿using ProcraftAPI.Dtos.Process.Step.Action;
-using ProcraftAPI.Dtos.User;
-using ProcraftAPI.Enums;
+﻿using ProcraftAPI.Enums;
 
 namespace ProcraftAPI.Dtos.Process.Step;
 
-public record StepDto
+public record StepListDto
 {
     public Guid Id { get; init; }
     public string Title { get; init; } = string.Empty;
@@ -13,6 +11,4 @@ public record StepDto
     public DateTime StartForecast { get; init; }
     public DateTime FinishForecast { get; init; }
     public Guid ProcessId { get; init; }
-    public List<ActionDto>? Actions { get; init; } = new List<ActionDto>();
-    public List<UserListDto>? Users { get; init; } = new List<UserListDto>();
 }

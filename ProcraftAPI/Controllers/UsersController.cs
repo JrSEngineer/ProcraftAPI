@@ -6,6 +6,8 @@ using ProcraftAPI.Dtos.User.Address;
 using ProcraftAPI.Dtos.User;
 using Microsoft.AspNetCore.Authorization;
 using ProcraftAPI.Dtos.Process;
+using ProcraftAPI.Dtos.Process.Step;
+using ProcraftAPI.Dtos.Process.Step.Action;
 
 namespace ProcraftAPI.Controllers;
 
@@ -26,10 +28,13 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetUserByIdAsync(Guid id)
     {
         var user = await _context.User
+            .Where(u => u.Id == id)
             .Include(u => u.Authentication)
             .Include(u => u.Address)
             .Include(u => u.Processes)
-            .FirstOrDefaultAsync(u => u.Id == id);
+            .Include(u => u.Steps)
+            .Include(u => u.Actions)
+            .FirstOrDefaultAsync();
 
         if (user == null)
         {
@@ -70,6 +75,26 @@ public class UsersController : ControllerBase
                 Title = p.Title,
                 Description = p.Description,
                 Progress = p.Progress
+            }).ToList(),
+            Steps = user.Steps.Select(s => new StepListDto
+            {
+                Id = s.Id,
+                Title = s.Title,
+                Description = s.Description,
+                Progress = s.Progress,
+                StartForecast = s.StartForecast,
+                FinishForecast = s.FinishForecast,
+                ProcessId = s.Id,
+            }).ToList(),
+            Actions = user!.Actions!.Select(a => new ActionDto
+            {
+                Id = a.Id,
+                Title = a.Title,
+                Description = a.Description,
+                Progress = a.Progress,
+                Duration = a.Duration,
+                UserId = a.UserId,
+                StepId = a.StepId,
             }).ToList(),
         };
 

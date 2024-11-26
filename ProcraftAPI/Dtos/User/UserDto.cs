@@ -1,4 +1,6 @@
 ﻿using ProcraftAPI.Dtos.Process;
+using ProcraftAPI.Dtos.Process.Step;
+using ProcraftAPI.Dtos.Process.Step.Action;
 using ProcraftAPI.Dtos.Security;
 using ProcraftAPI.Dtos.User.Address;
 
@@ -16,4 +18,6 @@ public record UserDto
     public AuthenticationDto Authentication { get; init; } = null!;
 
     public List<ProcessListDto>? Processes { get; init; }
+    public List<StepListDto>? Steps { get; init; }
+    public List<ActionDto>? Actions { get; init; }
 }
