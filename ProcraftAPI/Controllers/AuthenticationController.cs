@@ -55,6 +55,7 @@ public class AuthenticationController : ControllerBase
             Address = new UserAddress
             {
                 Id = Guid.NewGuid(),
+                AddressNumber = dto.Address.AddressNumber,
                 Street = dto.Address.Street,
                 City = dto.Address.City,
                 State = dto.Address.State,
