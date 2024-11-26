@@ -76,7 +76,7 @@ public class UsersController : ControllerBase
                 Description = p.Description,
                 Progress = p.Progress
             }).ToList(),
-            Steps = user.Steps.Select(s => new StepListDto
+            Steps = user.Steps?.Select(s => new StepListDto
             {
                 Id = s.Id,
                 Title = s.Title,

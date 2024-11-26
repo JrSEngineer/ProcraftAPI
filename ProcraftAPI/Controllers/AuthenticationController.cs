@@ -168,6 +168,8 @@ public class AuthenticationController : ControllerBase
             .Include(u => u.Authentication)
             .Include(u => u.Address)
             .Include(u => u.Processes)
+            .Include(u => u.Steps)
+            .Include(u => u.Actions)
             .FirstOrDefaultAsync();
 
         var credentialOwner = new UserDto
@@ -202,14 +204,34 @@ public class AuthenticationController : ControllerBase
                 Title = p.Title,
                 Description = p.Description,
                 Progress = p.Progress
-            }).ToList()
+            }).ToList(),
+            Steps = userData.Steps?.Select(s => new StepListDto
+            {
+                Id = s.Id,
+                Title = s.Title,
+                Description = s.Description,
+                Progress = s.Progress,
+                StartForecast = s.StartForecast,
+                FinishForecast = s.FinishForecast,
+                ProcessId = s.Id,
+            }).ToList(),
+            Actions = userData!.Actions!.Select(a => new ActionDto
+            {
+                Id = a.Id,
+                Title = a.Title,
+                Description = a.Description,
+                Progress = a.Progress,
+                Duration = a.Duration,
+                UserId = a.UserId,
+                StepId = a.StepId,
+            }).ToList(),
         };
 
         return Ok(credentialOwner);
     }
 
     [HttpPost("token")]
-    public async Task<IActionResult> VerifyTokenAsync(TokenDto dto)
+    public IActionResult VerifyTokenAsync(TokenDto dto)
     {
         bool validToken = _tokenService.ValidateToken(dto.token);
 
