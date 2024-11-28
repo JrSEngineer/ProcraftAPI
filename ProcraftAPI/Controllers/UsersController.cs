@@ -51,6 +51,7 @@ public class UsersController : ControllerBase
             FullName = user.FullName,
             Description = user.Description,
             PhoneNumber = user.PhoneNumber,
+            GroupId = user.GroupId,
             Cpf = user.Cpf,
             Authentication = new AuthenticationDto
             {

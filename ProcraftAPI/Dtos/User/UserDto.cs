@@ -13,6 +13,7 @@ public record UserDto
     public string FullName { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
     public string PhoneNumber { get; init; } = string.Empty;
+    public Guid GroupId { get; init; }
     public string Cpf { get; init; } = string.Empty;
     public AddressDto Address { get; init; } = null!;
     public AuthenticationDto Authentication { get; init; } = null!;
