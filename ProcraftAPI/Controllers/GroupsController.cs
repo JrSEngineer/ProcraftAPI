@@ -80,7 +80,9 @@ public class GroupsController : ControllerBase
                 ProfileImage = u.ProfileImage,
                 Description = u.Description,
                 PhoneNumber = u.PhoneNumber,
-                Cpf = u.Cpf
+                Cpf = u.Cpf,
+                Email= u.Authentication.Email,
+                GroupId = u.GroupId
             }).ToList()
         };
 
