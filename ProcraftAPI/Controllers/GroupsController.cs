@@ -42,6 +42,7 @@ public class GroupsController : ControllerBase
         return Created($"{this.HttpContext.Request.Path}", newGroupDto);
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetGroupsAsync()
     {
@@ -52,6 +53,7 @@ public class GroupsController : ControllerBase
         return Ok(Groups);
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetGroupByIdAsync(Guid id)
     {
@@ -90,6 +92,7 @@ public class GroupsController : ControllerBase
         return Ok(groupDto);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteGroup(Guid id)
     {

@@ -180,6 +180,7 @@ public class AuthenticationController : ControllerBase
             Description = userData.Description,
             PhoneNumber = userData.PhoneNumber,
             Cpf = userData.Cpf,
+            GroupId = userData.GroupId,
             Authentication = new AuthenticationDto
             {
                 Email = userData.Authentication.Email,

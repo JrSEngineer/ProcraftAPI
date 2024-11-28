@@ -30,7 +30,7 @@ namespace ProcraftAPI.Data.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<ProcraftGroup>().HasMany(g => g.Members).WithOne().HasForeignKey(m => m.GroupId);
+            builder.Entity<ProcraftGroup>().HasMany(g => g.Members).WithOne().HasForeignKey(m => m.GroupId).OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ProcraftAuthentication>().HasKey(a => a.Email);
 
