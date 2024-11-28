@@ -59,6 +59,7 @@ public class GroupsController : ControllerBase
             .AsNoTracking()
             .Where(g => g.Id == id)
             .Include(g => g.Members)
+            .ThenInclude(u => u.Authentication)
             .FirstOrDefaultAsync();
 
         if (group == null)
