@@ -316,6 +316,7 @@ public class ProcessesController : ControllerBase
             .ThenInclude(u => u.Authentication)
             .Include(p => p.Scope)
             .Include(p => p.Steps)
+            .Include(p => p.Steps)
             .ThenInclude(s => s.Users)
             .Include(p => p.Steps)
             .ThenInclude(s => s.Actions)
