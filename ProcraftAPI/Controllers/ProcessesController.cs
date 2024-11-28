@@ -309,6 +309,7 @@ public class ProcessesController : ControllerBase
             .AsNoTracking()
             .Where(p => p.Id == id)
             .Include(p => p.Users)
+            .ThenInclude(u => u.Authentication)
             .Include(p => p.Scope)
             .Include(p => p.Steps)
             .FirstOrDefaultAsync();
@@ -321,7 +322,47 @@ public class ProcessesController : ControllerBase
             });
         }
 
-        return Ok(process);
+        var processDto = new ProcessDto
+        {
+            Id = process.Id,
+            Title = process.Title,
+            Description = process.Description,
+            Progress = process.Progress,
+            Scope = new ScopeDto
+            {
+                Id = process.Scope.Id,
+                Abilities = process.Scope.Abilities.Select(ability => new ScopeAbilityDto
+                {
+                    Id = ability.Id,
+                    Name = ability.Name,
+                    Description = ability.Description,
+                    ScpoeId = ability.ScopeId,
+                }).ToList(),
+            },
+            Users = process.Users.Select(user => new UserListDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Description = user.Description,
+                ProfileImage = user.ProfileImage,
+                PhoneNumber = user.PhoneNumber,
+                Cpf = user.Cpf,
+                Email = user.Authentication.Email
+            }).ToList(),
+            Steps = process.Steps.Select(step => new StepDto
+            {
+                Id = step.Id,
+                Title = step.Title,
+                Description = step.Description,
+                Progress = step.Progress,
+                StartForecast = step.StartForecast,
+                FinishForecast = step.FinishForecast,
+                ProcessId = step.ProcessId
+            }).ToList(),
+
+        };
+
+        return Ok(processDto);
     }
 
     [HttpPatch("{processId}")]
