@@ -6,6 +6,7 @@ using ProcraftAPI.Dtos.Process;
 using ProcraftAPI.Dtos.Process.Ability;
 using ProcraftAPI.Dtos.Process.Scope;
 using ProcraftAPI.Dtos.Process.Step;
+using ProcraftAPI.Dtos.Process.Step.Action;
 using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Entities.Process;
 using ProcraftAPI.Entities.Process.Scope;
@@ -315,6 +316,9 @@ public class ProcessesController : ControllerBase
             .ThenInclude(u => u.Authentication)
             .Include(p => p.Scope)
             .Include(p => p.Steps)
+            .ThenInclude(s => s.Users)
+            .Include(p => p.Steps)
+            .ThenInclude(s => s.Actions)
             .FirstOrDefaultAsync();
 
         if (process == null)
@@ -361,7 +365,28 @@ public class ProcessesController : ControllerBase
                 Progress = step.Progress,
                 StartForecast = step.StartForecast,
                 FinishForecast = step.FinishForecast,
-                ProcessId = step.ProcessId
+                ProcessId = step.ProcessId,
+                Users = step?.Users?.Select(user => new UserListDto
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Description = user.Description,
+                    ProfileImage = user.ProfileImage,
+                    PhoneNumber = user.PhoneNumber,
+                    Cpf = user.Cpf,
+                    Email = user.Authentication.Email,
+                    GroupId = user.GroupId,
+                }).ToList(),
+                Actions = step?.Actions?.Select(action => new ActionDto
+                {
+                    Id = action.Id,
+                    Title = action.Title,
+                    Description = action.Description,
+                    Progress = action.Progress,
+                    Duration = action.Duration,
+                    StepId = action.StepId,
+                    UserId = action.UserId
+                }).ToList(),
             }).ToList(),
 
         };
