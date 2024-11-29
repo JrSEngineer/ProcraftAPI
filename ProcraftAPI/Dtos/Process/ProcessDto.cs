@@ -11,6 +11,10 @@ public record ProcessDto
     public string Title { get; init; } = string.Empty;
     public string Description { get; init; } = string.Empty;
     public Progress Progress { get; init; }
+    public DateTime StartForecast { get; init; }
+    public DateTime FinishForecast { get; init; }
+    public DateTime? StartedAt { get; init; }
+    public DateTime? FinishedAt { get; init; }
     public List<UserListDto> Users { get; init; } = [];
     public ScopeDto? Scope { get; init; }
     public List<StepDto> Steps { get; init; } = [];

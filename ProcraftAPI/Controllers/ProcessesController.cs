@@ -314,6 +314,10 @@ public class ProcessesController : ControllerBase
             .Where(p => p.Id == id)
             .Include(p => p.Users)
             .ThenInclude(u => u.Authentication)
+            .Include(p => p.Users)
+            .ThenInclude(u => u.Actions)
+            .Include(p => p.Users)
+            .ThenInclude(u => u.Steps)
             .Include(p => p.Scope)
             .Include(p => p.Steps)
             .ThenInclude(s => s.Users)
@@ -335,6 +339,10 @@ public class ProcessesController : ControllerBase
             Title = process.Title,
             Description = process.Description,
             Progress = process.Progress,
+            StartForecast = process.StartForecast,
+            FinishForecast = process.FinishForecast,
+            StartedAt = process.StartedAt,
+            FinishedAt = process.FinishedAt,
             Scope = new ScopeDto
             {
                 Id = process.Scope.Id,
