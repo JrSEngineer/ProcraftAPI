@@ -25,7 +25,7 @@ namespace ProcraftAPI.Data.Context
         public DbSet<ProcessScope> Scope { get; set; }
         public DbSet<ScopeAbility> Ability { get; set; }
         public DbSet<StepUser> StepUser { get; set; }
-        public DbSet<ProcessStep> Step {  get; set; }
+        public DbSet<ProcessStep> Step { get; set; }
         public DbSet<ProcessAction> Action { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -38,11 +38,13 @@ namespace ProcraftAPI.Data.Context
 
             builder.Entity<ProcraftUser>().HasMany(u => u.Actions).WithOne().HasForeignKey(u => u.UserId).OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<ProcraftUser>().HasMany(u => u.Steps).WithMany(s => s.Users);
+
             builder.Entity<ProcessStep>().HasMany(u => u.Actions).WithOne().HasForeignKey(a => a.StepId).OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ProcessUser>().HasKey(pU => new { pU.UserId, pU.ProcessId });
 
-            builder.Entity<StepUser>().HasKey(sU => new { sU.UserId, sU.StepId});
+            builder.Entity<StepUser>().HasKey(sU => new { sU.UserId, sU.StepId });
         }
     }
 }
