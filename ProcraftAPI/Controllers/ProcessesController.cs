@@ -324,11 +324,12 @@ public class ProcessesController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetProcessesAsync()
+    [HttpGet("overall/{groupId}")]
+    public async Task<IActionResult> GetProcessesAsync(Guid groupId)
     {
         var processes = await _context.Process
                         .AsNoTracking()
+                        .Where(p => p.Users.Any(u => u.GroupId == groupId))
                         .ToListAsync();
 
         var processesList = processes.Select(process => new ProcessListDto
