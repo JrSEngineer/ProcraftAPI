@@ -335,6 +335,10 @@ public class ProcessesController : ControllerBase
             Title = process.Title,
             Description = process.Description,
             Progress = process.Progress,
+            StartForecast = process.StartForecast,
+            FinishForecast = process.FinishForecast,
+            StartedAt = process.StartedAt,
+            FinishedAt = process.FinishedAt,
             Scope = new ScopeDto
             {
                 Id = process.Scope.Id,
