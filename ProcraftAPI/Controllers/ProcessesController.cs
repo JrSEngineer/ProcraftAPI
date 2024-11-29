@@ -11,6 +11,7 @@ using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Entities.Process;
 using ProcraftAPI.Entities.Process.Scope;
 using ProcraftAPI.Entities.Process.Step;
+using ProcraftAPI.Entities.User;
 
 namespace ProcraftAPI.Controllers;
 
@@ -33,6 +34,7 @@ public class ProcessesController : ControllerBase
         var group = await _context.Group
                     .Where(g => g.Id == groupId)
                     .Include(g => g.Members)
+                    .ThenInclude(m => m.Authentication)
                     .FirstOrDefaultAsync();
 
         if (group == null)
@@ -43,9 +45,26 @@ public class ProcessesController : ControllerBase
             });
         }
 
+        Guid processId = Guid.NewGuid();
+
         var usersList = group.Members.ToList();
 
-        Guid processId = Guid.NewGuid();
+        var userForProcessCreation = usersList.Find(u => u.Id == dto.ManagerId);
+
+        if (userForProcessCreation == null)
+        {
+            return NotFound(new
+            {
+                Message = $"User ith id {dto.ManagerId} not found."
+            });
+        }
+
+        var manager = new ProcessManager
+        {
+            Id = userForProcessCreation.Id,
+            Email = userForProcessCreation.Authentication.Email,
+            ProfileImage = userForProcessCreation.ProfileImage
+        };
 
         ProcessScope? scope = null;
 
@@ -85,6 +104,8 @@ public class ProcessesController : ControllerBase
             Id = processId,
             Title = dto.Title,
             Description = dto.Description,
+            ManagerId = dto.ManagerId,
+            Manager = manager,
             Scope = scope
         };
 
@@ -130,6 +151,13 @@ public class ProcessesController : ControllerBase
             Title = processData.Title,
             Description = processData.Description,
             Progress = processData.Progress,
+            Manager = new ManagerDto
+            {
+                ManagerId = userForProcessCreation.Id,
+                ProcessId = processId,
+                ProfileImage = userForProcessCreation.ProfileImage,
+                Email = userForProcessCreation.Authentication.Email
+            },
             Users = processData.Users.Select(u => new UserListDto
             {
                 Id = u.Id,
@@ -155,7 +183,7 @@ public class ProcessesController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost("{processId}/group/{groupId}/users")]
+    [HttpPost("group/{groupId}/process/{processId}/users")]
     public async Task<IActionResult> AddMemberToProcessAsync(Guid processId, Guid groupId, [FromBody] List<UserIdDto> dtoList)
     {
         var group = await _context.Group
@@ -303,7 +331,16 @@ public class ProcessesController : ControllerBase
                         .AsNoTracking()
                         .ToListAsync();
 
-        return Ok(processes);
+        var processesList = processes.Select(process => new ProcessListDto
+        {
+            Id = process.Id,
+            Title = process.Title,
+            Description = process.Description,
+            Progress = process.Progress,
+            FinishedStepsPorcentage = process.CalculateProocessProgressPorcentage()
+        }).ToList();
+
+        return Ok(processesList);
     }
 
     [HttpGet("{id}")]
@@ -312,6 +349,9 @@ public class ProcessesController : ControllerBase
         var process = await _context.Process
             .AsNoTracking()
             .Where(p => p.Id == id)
+            .Include(p => p.Manager)
+            .Include(p => p.Steps)
+            .ThenInclude(s => s.Actions)
             .Include(p => p.Users)
             .ThenInclude(u => u.Authentication)
             .Include(p => p.Users)
@@ -319,10 +359,6 @@ public class ProcessesController : ControllerBase
             .Include(p => p.Users)
             .ThenInclude(u => u.Steps)
             .Include(p => p.Scope)
-            .Include(p => p.Steps)
-            .ThenInclude(s => s.Users)
-            .Include(p => p.Steps)
-            .ThenInclude(s => s.Actions)
             .FirstOrDefaultAsync();
 
         if (process == null)
@@ -343,6 +379,13 @@ public class ProcessesController : ControllerBase
             FinishForecast = process.FinishForecast,
             StartedAt = process.StartedAt,
             FinishedAt = process.FinishedAt,
+            Manager = new ManagerDto
+            {
+                ProcessId = process.Id,
+                ManagerId = process.Manager.Id,
+                Email = process.Manager.Email,
+                ProfileImage = process.Manager.ProfileImage,
+            },
             Scope = new ScopeDto
             {
                 Id = process.Scope.Id,
@@ -394,16 +437,16 @@ public class ProcessesController : ControllerBase
                 StartForecast = step.StartForecast,
                 FinishForecast = step.FinishForecast,
                 ProcessId = step.ProcessId,
-                Users = step?.Users?.Select(user => new UserListDto
+                Users = step?.Users?.Select(userFromStep => new UserListDto
                 {
-                    Id = user.Id,
-                    FullName = user.FullName,
-                    Description = user.Description,
-                    ProfileImage = user.ProfileImage,
-                    PhoneNumber = user.PhoneNumber,
-                    Cpf = user.Cpf,
-                    Email = user.Authentication.Email,
-                    GroupId = user.GroupId,
+                    Id = userFromStep.Id,
+                    FullName = userFromStep.FullName,
+                    Description = userFromStep.Description,
+                    ProfileImage = userFromStep.ProfileImage,
+                    PhoneNumber = userFromStep.PhoneNumber,
+                    Cpf = userFromStep.Cpf,
+                    Email = userFromStep.Authentication.Email,
+                    GroupId = userFromStep.GroupId,
                 }).ToList() ?? new(),
                 Actions = step?.Actions?.Select(action => new ActionDto
                 {

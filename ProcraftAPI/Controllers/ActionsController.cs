@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ProcraftAPI.Data.Context;
 using ProcraftAPI.Dtos.Process.Step.Action;
 using ProcraftAPI.Entities.Process.Step;
+using ProcraftAPI.Enums;
 
 namespace ProcraftAPI.Controllers
 {
@@ -27,7 +28,7 @@ namespace ProcraftAPI.Controllers
                 .Include(s => s.Users)
                 .FirstOrDefaultAsync();
 
-            if(step == null)
+            if (step == null)
             {
                 return NotFound(new
                 {
@@ -55,7 +56,7 @@ namespace ProcraftAPI.Controllers
             };
 
             await _context.Action.AddAsync(newAction);
-            
+
             await _context.SaveChangesAsync();
 
             var actionDto = new ActionDto
@@ -65,7 +66,7 @@ namespace ProcraftAPI.Controllers
                 Description = newAction.Description,
                 Progress = newAction.Progress,
                 UserId = newAction.UserId,
-                StepId= newAction.StepId
+                StepId = newAction.StepId
             };
 
             return Created(this.Request.Path, actionDto);
@@ -76,7 +77,7 @@ namespace ProcraftAPI.Controllers
         {
             var action = await _context.Action.FindAsync(id);
 
-            if(action == null)
+            if (action == null)
             {
                 return NotFound(new
                 {
@@ -90,19 +91,166 @@ namespace ProcraftAPI.Controllers
                 Title = action.Title,
                 Description = action.Description,
                 Progress = action.Progress,
+                StartedAt = action.StartedAt,
+                FinishedAt = action.FinishedAt,
+                Duration = action.Duration,
                 UserId = action.UserId,
                 StepId = action.StepId
             };
 
-            return Ok();
+            return Ok(actionDto);
         }
-        
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> UpdateActionAsync(Guid id, [FromBody] UpdateActionDto dto)
+
+        [HttpPatch("start")]
+        public async Task<IActionResult> StartActionAsync([FromBody] StartActionDto dto)
         {
+            var user = await _context.User.FindAsync(dto.userId);
+
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"User with id {dto.userId} not found."
+                });
+            }
+
+            var action = await _context.Action.FindAsync(dto.actionId);
+
+            if (action == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"Action with id {dto.actionId} not found."
+                });
+            }
+
+            bool validUser = action.UserId == dto.userId;
+
+            if (!validUser)
+            {
+                return BadRequest(new
+                {
+                    Message = $"This user cannot apply changes to the current action. User id {dto.userId}."
+                });
+            }
+
+            action.StartedAt = dto.StartedAt;
+
+            action.Progress = Progress.Started;
+
+            var step = await _context.Step.FindAsync(action.StepId);
+
+            bool nonInitializedStep = step!.Progress == Progress.Created;
+
+            if (nonInitializedStep)
+            {
+                step.Progress = Progress.Started;
+            }
+
+            var process = await _context.Process.FindAsync(step.ProcessId);
+
+            bool nonInitializedProcess = process!.Progress == Progress.Created;
+
+            if (nonInitializedStep)
+            {
+                process.Progress = Progress.Started;
+            }
+
+            await _context.SaveChangesAsync();
+
+            var actionDto = new ActionDto
+            {
+                Id = action.Id,
+                Title = action.Title,
+                Description = action.Description,
+                Progress = action.Progress,
+                StartedAt = action.StartedAt,
+                UserId = action.UserId,
+                StepId = action.StepId,
+                Duration = action.Duration,
+            };
+
+            return Ok(actionDto);
+        }
+
+        [HttpPatch("finish")]
+        public async Task<IActionResult> FinishActionAsync([FromBody] FinishActionDto dto)
+        {
+            var user = await _context.User.FindAsync(dto.userId);
+
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"User with id {dto.userId} not found."
+                });
+            }
+
+            var action = await _context.Action.FindAsync(dto.actionId);
+
+            if (action == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"Action with id {dto.actionId} not found."
+                });
+            }
+
+            bool validUser = action.UserId == dto.userId;
+
+            if (!validUser)
+            {
+                return BadRequest(new
+                {
+                    Message = $"This user cannot apply changes to the current action. User id {dto.userId}."
+                });
+            }
+
+            action.FinishedAt = dto.FinishedAt;
+            action.Progress = Progress.Finished;
+
+            await _context.SaveChangesAsync();
+
+            var startTimeTicks = action.StartedAt.Ticks;
+
+            var finishingTimeTicks = action.FinishedAt.Ticks;
+
+            var timeExpended = (finishingTimeTicks - startTimeTicks);
+
+            var actionDuration = DateTime.FromBinary(timeExpended);
+
+            var actionDto = new ActionDto
+            {
+                Id = action.Id,
+                Title = action.Title,
+                Description = action.Description,
+                Progress = action.Progress,
+                StartedAt = action.StartedAt,
+                FinishedAt = action.FinishedAt,
+                Duration = actionDuration,
+                UserId = action.UserId,
+                StepId = action.StepId,
+            };
+
+            return Ok(actionDto);
+        }
+
+        [HttpPatch("{id}/user/{userId}")]
+        public async Task<IActionResult> UpdateActionAsync(Guid id, Guid userId, [FromBody] UpdateActionDto dto)
+        {
+            var user = await _context.User.FindAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"User with id {userId} not found."
+                });
+            }
+
             var action = await _context.Action.FindAsync(id);
 
-            if(action == null)
+            if (action == null)
             {
                 return NotFound(new
                 {
@@ -110,10 +258,19 @@ namespace ProcraftAPI.Controllers
                 });
             }
 
+            bool validUser = action.UserId == userId;
+
+            if (!validUser)
+            {
+                return BadRequest(new
+                {
+                    Message = $"This user cannot apply changes to the current action. User id {userId}."
+                });
+            }
+
             action.Title = dto.Title;
             action.Description = dto.Description;
-            action.Duration = dto.Duration;
-            action.Progress = dto.Progress;
+            action.Progress = Progress.Started;
 
             await _context.SaveChangesAsync();
 
@@ -124,7 +281,8 @@ namespace ProcraftAPI.Controllers
                 Description = action.Description,
                 Progress = action.Progress,
                 UserId = action.UserId,
-                StepId = action.StepId
+                StepId = action.StepId,
+                Duration = action.Duration
             };
 
             return Ok(actionDto);

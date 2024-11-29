@@ -30,21 +30,6 @@ namespace ProcraftAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Authentication",
-                columns: table => new
-                {
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<int>(type: "integer", nullable: false),
-                    AccountStatus = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Authentication", x => x.Email);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Group",
                 columns: table => new
                 {
@@ -54,6 +39,19 @@ namespace ProcraftAPI.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Group", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Manager",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProfileImage = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Manager", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,7 +75,6 @@ namespace ProcraftAPI.Data.Migrations
                     Description = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     Cpf = table.Column<string>(type: "text", nullable: false),
-                    AuthenticationEmail = table.Column<string>(type: "text", nullable: false),
                     AddressId = table.Column<Guid>(type: "uuid", nullable: false),
                     GroupId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
@@ -89,12 +86,6 @@ namespace ProcraftAPI.Data.Migrations
                         column: x => x.AddressId,
                         principalTable: "Address",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_User_Authentication_AuthenticationEmail",
-                        column: x => x.AuthenticationEmail,
-                        principalTable: "Authentication",
-                        principalColumn: "Email",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_User_Group_GroupId",
@@ -136,16 +127,44 @@ namespace ProcraftAPI.Data.Migrations
                     FinishForecast = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     FinishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ScopeId = table.Column<Guid>(type: "uuid", nullable: true)
+                    ScopeId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ManagerId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Process", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Process_Manager_ManagerId",
+                        column: x => x.ManagerId,
+                        principalTable: "Manager",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Process_Scope_ScopeId",
                         column: x => x.ScopeId,
                         principalTable: "Scope",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Authentication",
+                columns: table => new
+                {
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false),
+                    AccountStatus = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Authentication", x => x.Email);
+                    table.ForeignKey(
+                        name: "FK_Authentication_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,30 +186,6 @@ namespace ProcraftAPI.Data.Migrations
                     table.ForeignKey(
                         name: "FK_ProcessUser_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProcraftProcessProcraftUser",
-                columns: table => new
-                {
-                    ProcessesId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UsersId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProcraftProcessProcraftUser", x => new { x.ProcessesId, x.UsersId });
-                    table.ForeignKey(
-                        name: "FK_ProcraftProcessProcraftUser_Process_ProcessesId",
-                        column: x => x.ProcessesId,
-                        principalTable: "Process",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProcraftProcessProcraftUser_User_UsersId",
-                        column: x => x.UsersId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -227,47 +222,24 @@ namespace ProcraftAPI.Data.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Progress = table.Column<int>(type: "integer", nullable: false),
-                    StartForecast = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    FinishForecast = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    StepId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    FinishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Duration = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProcessStepId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ProcraftUserId = table.Column<Guid>(type: "uuid", nullable: true)
+                    StepId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Action", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Action_Step_ProcessStepId",
-                        column: x => x.ProcessStepId,
-                        principalTable: "Step",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Action_User_ProcraftUserId",
-                        column: x => x.ProcraftUserId,
-                        principalTable: "User",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProcessStepProcraftUser",
-                columns: table => new
-                {
-                    StepsId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UsersId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProcessStepProcraftUser", x => new { x.StepsId, x.UsersId });
-                    table.ForeignKey(
-                        name: "FK_ProcessStepProcraftUser_Step_StepsId",
-                        column: x => x.StepsId,
+                        name: "FK_Action_Step_StepId",
+                        column: x => x.StepId,
                         principalTable: "Step",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProcessStepProcraftUser_User_UsersId",
-                        column: x => x.UsersId,
+                        name: "FK_Action_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -303,14 +275,25 @@ namespace ProcraftAPI.Data.Migrations
                 column: "ProcessScopeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Action_ProcessStepId",
+                name: "IX_Action_StepId",
                 table: "Action",
-                column: "ProcessStepId");
+                column: "StepId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Action_ProcraftUserId",
+                name: "IX_Action_UserId",
                 table: "Action",
-                column: "ProcraftUserId");
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Authentication_UserId",
+                table: "Authentication",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Process_ManagerId",
+                table: "Process",
+                column: "ManagerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Process_ScopeId",
@@ -318,19 +301,9 @@ namespace ProcraftAPI.Data.Migrations
                 column: "ScopeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProcessStepProcraftUser_UsersId",
-                table: "ProcessStepProcraftUser",
-                column: "UsersId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ProcessUser_ProcessId",
                 table: "ProcessUser",
                 column: "ProcessId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProcraftProcessProcraftUser_UsersId",
-                table: "ProcraftProcessProcraftUser",
-                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Step_ProcessId",
@@ -348,11 +321,6 @@ namespace ProcraftAPI.Data.Migrations
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_AuthenticationEmail",
-                table: "User",
-                column: "AuthenticationEmail");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_User_GroupId",
                 table: "User",
                 column: "GroupId");
@@ -368,13 +336,10 @@ namespace ProcraftAPI.Data.Migrations
                 name: "Action");
 
             migrationBuilder.DropTable(
-                name: "ProcessStepProcraftUser");
+                name: "Authentication");
 
             migrationBuilder.DropTable(
                 name: "ProcessUser");
-
-            migrationBuilder.DropTable(
-                name: "ProcraftProcessProcraftUser");
 
             migrationBuilder.DropTable(
                 name: "StepUser");
@@ -392,10 +357,10 @@ namespace ProcraftAPI.Data.Migrations
                 name: "Address");
 
             migrationBuilder.DropTable(
-                name: "Authentication");
+                name: "Group");
 
             migrationBuilder.DropTable(
-                name: "Group");
+                name: "Manager");
 
             migrationBuilder.DropTable(
                 name: "Scope");

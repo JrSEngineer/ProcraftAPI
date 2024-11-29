@@ -8,7 +8,9 @@ namespace ProcraftAPI.Entities.Process.Step
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public Progress Progress { get; set; } = Progress.Created;
-        public TimeSpan? Duration { get; set; }
+        public DateTime StartedAt { get; set; }
+        public DateTime FinishedAt { get; set; }
+        public DateTime Duration { get; set; }
         public Guid UserId { get; set; }
         public Guid StepId { get; set; }
     }

@@ -3,8 +3,17 @@
     "Docker Compose": {
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "procraftapi",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
       "serviceActions": {
-        "procraftapi": "StartDebugging"
+        "procraftapi": "StartDebugging",
+        "procraft-database": "StartWithoutDebugging"
+      },
+      "remoteDebugMachine": "172.18.0.3",
+      "environmentVariables": {
+        "ASPNETCORE_HTTP_PORTS": "7000",
+        "ASPNETCORE_HTTPS_PORTS": "7001"
       }
     }
   }

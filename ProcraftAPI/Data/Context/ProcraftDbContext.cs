@@ -27,6 +27,7 @@ namespace ProcraftAPI.Data.Context
         public DbSet<StepUser> StepUser { get; set; }
         public DbSet<ProcessStep> Step { get; set; }
         public DbSet<ProcessAction> Action { get; set; }
+        public DbSet<ProcessManager> Manager { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -36,7 +37,13 @@ namespace ProcraftAPI.Data.Context
 
             builder.Entity<ProcraftProcess>().HasMany(p => p.Steps).WithOne(s => s.Process).HasForeignKey(s => s.ProcessId).OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<ProcraftProcess>().HasMany(p => p.Users).WithMany(s => s.Processes).UsingEntity<ProcessUser>();
+
             builder.Entity<ProcraftUser>().HasMany(u => u.Actions).WithOne().HasForeignKey(u => u.UserId).OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ProcraftProcess>().HasOne(p => p.Manager).WithMany(m => m.Processes).HasForeignKey(p => p.ManagerId).IsRequired();
+
+            builder.Entity<ProcraftUser>().HasOne(u => u.Authentication).WithOne(a => a.User).OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ProcraftUser>().HasMany(u => u.Steps).WithMany(s => s.Users).UsingEntity<StepUser>();
 

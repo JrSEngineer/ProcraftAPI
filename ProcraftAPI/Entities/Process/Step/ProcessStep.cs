@@ -16,5 +16,5 @@ public class ProcessStep
     public ProcraftProcess Process { get; set; } = null!;
     public List<ProcessAction>? Actions { get; set; } = new List<ProcessAction>();
     public List<StepUser> StepUsers { get; set; } = new List<StepUser>();
-    public List<ProcraftUser>? Users { get; set; } = new List<ProcraftUser>();
+    public List<ProcraftUser> Users { get; set; } = new List<ProcraftUser>();
 }

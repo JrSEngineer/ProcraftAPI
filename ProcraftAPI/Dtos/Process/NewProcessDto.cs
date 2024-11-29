@@ -12,6 +12,7 @@ public record NewProcessDto
 
     [DefaultValue("App para monitorar atividades físicas, nutrição e saúde geral.")]
     public string Description { get; init; } = string.Empty;
+    public Guid ManagerId { get; init; }
 
     public DateTime StartForecast { get; init; }
 

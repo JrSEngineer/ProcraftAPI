@@ -31,7 +31,7 @@
     "Container (Dockerfile)": {
       "commandName": "Docker",
       "nativeDebugging": true,
-      "remoteDebugMachine": "procraftapi",
+      "remoteDebugMachine": "172.18.0.3",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
       "publishAllPorts": true,

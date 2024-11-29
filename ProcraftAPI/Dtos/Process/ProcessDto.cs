@@ -15,7 +15,8 @@ public record ProcessDto
     public DateTime FinishForecast { get; init; }
     public DateTime? StartedAt { get; init; }
     public DateTime? FinishedAt { get; init; }
-    public List<UserListDto> Users { get; init; } = [];
+    public ManagerDto Manager { get; init; } = null!;
+    public List<UserListDto> Users { get; init; } = new List<UserListDto>();
     public ScopeDto? Scope { get; init; }
-    public List<StepDto> Steps { get; init; } = [];
+    public List<StepDto> Steps { get; init; } = new List<StepDto>();
 }

@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProcraftAPI.Data.Context;
@@ -23,7 +22,7 @@ public class StepsController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost("{processId}/steps")]
+    [HttpPost("process/{processId}")]
     public async Task<IActionResult> CreateStepsAsync(Guid processId, [FromBody] List<NewStepDto> dtosList)
     {
         var process = await _context.Process.FindAsync(processId);
@@ -55,15 +54,18 @@ public class StepsController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        return Created(this.Request.Path, new { Message = dtosList.Count() > 1 ? $"{dtosList.Count()} new steps added." : $"{dtosList.Count()} new step added." });
+        var CreatedSuccessfullyMessage = dtosList.Count() > 1 ? $"{dtosList.Count()} new steps added." : $"{dtosList.Count()} new step added.";
+
+        return Created(this.Request.Path, new { Message = CreatedSuccessfullyMessage });
     }
 
-    [HttpPost("{processId}/{stepId}/users/{userId}")]
-    public async Task<IActionResult> JoinStepAsync(Guid processId, Guid stepId, Guid userId)
+    [HttpPost("join")]
+    public async Task<IActionResult> JoinStepAsync([FromBody] JoinStepDto dto)
     {
         var process = await _context.Process
-            .Where(p => p.Id == processId)
+            .Where(p => p.Id == dto.processId)
             .Include(p => p.Users)
+            .ThenInclude(u => u.Authentication)
             .Include(p => p.Steps)
             .ThenInclude(s => s.Users)
             .FirstOrDefaultAsync();
@@ -72,27 +74,27 @@ public class StepsController : ControllerBase
         {
             return NotFound(new
             {
-                Message = $"Process with id {processId} not found."
+                Message = $"Process with id {dto.processId} not found."
             });
         }
 
-        var user = process.Users.FirstOrDefault(u => u.Id == userId);
+        var user = process.Users.FirstOrDefault(u => u.Id == dto.userId);
 
         if (user == null)
         {
             return NotFound(new
             {
-                Message = $"User with id {userId} not found in current process."
+                Message = $"User with id {dto.userId} not found in current process."
             });
         }
 
-        var step = process.Steps.Find(s => s.Id == stepId);
+        var step = process.Steps.Find(s => s.Id == dto.stepId);
 
         if (step == null)
         {
             return NotFound(new
             {
-                Message = $"Step with id {stepId} not found in current process."
+                Message = $"Step with id {dto.stepId} not found in current process."
             });
         }
 
@@ -102,7 +104,7 @@ public class StepsController : ControllerBase
         {
             return BadRequest(new
             {
-                Message = $"User with id {userId} is already participating from the current step."
+                Message = $"User with id {dto.userId} is already participating from the current step."
             });
         }
 
@@ -137,6 +139,8 @@ public class StepsController : ControllerBase
                 ProfileImage = u.ProfileImage,
                 PhoneNumber = u.PhoneNumber,
                 Cpf = u.Cpf,
+                GroupId = u.GroupId,
+                Email = u.Authentication.Email               
             }).ToList(),
         };
 
@@ -150,6 +154,7 @@ public class StepsController : ControllerBase
             .AsNoTracking()
             .Where(s => s.Id == stepId)
             .Include(s => s.Users)
+            .ThenInclude(u => u.Authentication)
             .Include(s => s.Actions)
             .FirstOrDefaultAsync();
 
@@ -187,7 +192,9 @@ public class StepsController : ControllerBase
                 Description = u.Description,
                 ProfileImage = u.ProfileImage,
                 PhoneNumber = u.PhoneNumber,
-                Cpf = u.Cpf
+                Cpf = u.Cpf,
+                Email = u.Authentication.Email,
+                GroupId = u.GroupId
             }).ToList(),
         };
 

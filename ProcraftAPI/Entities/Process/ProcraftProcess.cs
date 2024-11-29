@@ -19,6 +19,8 @@ public class ProcraftProcess
     public List<ProcraftUser> Users { get; set; } = new List<ProcraftUser>();
     public ProcessScope? Scope { get; set; }
     public List<ProcessStep> Steps { get; set; } = new List<ProcessStep>();
+    public ProcessManager Manager { get; set; } = null!;
+    public Guid ManagerId { get; set; }
 
     public double CalculateProocessProgressPorcentage()
     {
