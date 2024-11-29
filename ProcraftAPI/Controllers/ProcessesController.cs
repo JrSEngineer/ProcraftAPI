@@ -364,6 +364,26 @@ public class ProcessesController : ControllerBase
                 Cpf = user.Cpf,
                 Email = user.Authentication.Email,
                 GroupId = user.GroupId,
+                Steps = user?.Steps?.Select(step => new StepListDto
+                {
+                    Id = step.Id,
+                    Title = step.Title,
+                    Description = step.Description,
+                    StartForecast = step.StartForecast,
+                    FinishForecast = step.FinishForecast,
+                    ProcessId = step.ProcessId,
+                    Progress = step.Progress,
+                }).ToList() ?? new(),
+                Actions = user?.Actions?.Select(action => new ActionDto
+                {
+                    Id = action.Id,
+                    Title = action.Title,
+                    Description = action.Description,
+                    Progress = action.Progress,
+                    Duration = action.Duration,
+                    StepId = action.StepId,
+                    UserId = action.UserId
+                }).ToList() ?? new(),
             }).ToList(),
             Steps = process.Steps.Select(step => new StepDto
             {
