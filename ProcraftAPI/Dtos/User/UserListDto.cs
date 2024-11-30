@@ -13,6 +13,4 @@ public record UserListDto
     public string PhoneNumber { get; init; } = string.Empty;
     public Guid GroupId { get; init; }
     public string Cpf { get; init; } = string.Empty;
-    public List<StepListDto>? Steps { get; init; } = new List<StepListDto>();
-    public List<ActionDto>? Actions { get; init; } = new List<ActionDto>();
 }

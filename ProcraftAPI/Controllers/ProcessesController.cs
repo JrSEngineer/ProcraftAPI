@@ -168,7 +168,7 @@ public class ProcessesController : ControllerBase
                 Cpf = u.Cpf
             }).ToList(),
             Scope = scopeDto,
-            Steps = processData.Steps.Select(s => new StepDto
+            Steps = processData.Steps.Select(s => new StepListDto
             {
                 Id = s.Id,
                 Title = s.Title,
@@ -273,7 +273,7 @@ public class ProcessesController : ControllerBase
                 GroupId = u.GroupId,
             }).ToList(),
             Scope = scopeDto,
-            Steps = process.Steps.Select(s => new StepDto
+            Steps = process.Steps.Select(s => new StepListDto
             {
                 Id = s.Id,
                 Title = s.Title,
@@ -355,10 +355,6 @@ public class ProcessesController : ControllerBase
             .ThenInclude(s => s.Actions)
             .Include(p => p.Users)
             .ThenInclude(u => u.Authentication)
-            .Include(p => p.Users)
-            .ThenInclude(u => u.Actions)
-            .Include(p => p.Users)
-            .ThenInclude(u => u.Steps)
             .Include(p => p.Scope)
             .FirstOrDefaultAsync();
 
@@ -406,30 +402,9 @@ public class ProcessesController : ControllerBase
                 ProfileImage = user.ProfileImage,
                 PhoneNumber = user.PhoneNumber,
                 Cpf = user.Cpf,
-                Email = user.Authentication.Email,
-                GroupId = user.GroupId,
-                Steps = user?.Steps?.Select(step => new StepListDto
-                {
-                    Id = step.Id,
-                    Title = step.Title,
-                    Description = step.Description,
-                    StartForecast = step.StartForecast,
-                    FinishForecast = step.FinishForecast,
-                    ProcessId = step.ProcessId,
-                    Progress = step.Progress,
-                }).ToList() ?? new(),
-                Actions = user?.Actions?.Select(action => new ActionDto
-                {
-                    Id = action.Id,
-                    Title = action.Title,
-                    Description = action.Description,
-                    Progress = action.Progress,
-                    Duration = action.Duration,
-                    StepId = action.StepId,
-                    UserId = action.UserId
-                }).ToList() ?? new(),
+                Email = user.Authentication.Email
             }).ToList(),
-            Steps = process.Steps.Select(step => new StepDto
+            Steps = process.Steps.Select(step => new StepListDto
             {
                 Id = step.Id,
                 Title = step.Title,
@@ -437,28 +412,7 @@ public class ProcessesController : ControllerBase
                 Progress = step.Progress,
                 StartForecast = step.StartForecast,
                 FinishForecast = step.FinishForecast,
-                ProcessId = step.ProcessId,
-                Users = step?.Users?.Select(userFromStep => new UserListDto
-                {
-                    Id = userFromStep.Id,
-                    FullName = userFromStep.FullName,
-                    Description = userFromStep.Description,
-                    ProfileImage = userFromStep.ProfileImage,
-                    PhoneNumber = userFromStep.PhoneNumber,
-                    Cpf = userFromStep.Cpf,
-                    Email = userFromStep.Authentication.Email,
-                    GroupId = userFromStep.GroupId,
-                }).ToList() ?? new(),
-                Actions = step?.Actions?.Select(action => new ActionDto
-                {
-                    Id = action.Id,
-                    Title = action.Title,
-                    Description = action.Description,
-                    Progress = action.Progress,
-                    Duration = action.Duration,
-                    StepId = action.StepId,
-                    UserId = action.UserId
-                }).ToList() ?? new(),
+                ProcessId = step.ProcessId
             }).ToList(),
 
         };

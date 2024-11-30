@@ -18,5 +18,5 @@ public record ProcessDto
     public ManagerDto Manager { get; init; } = null!;
     public List<UserListDto> Users { get; init; } = new List<UserListDto>();
     public ScopeDto? Scope { get; init; }
-    public List<StepDto> Steps { get; init; } = new List<StepDto>();
+    public List<StepListDto> Steps { get; init; } = new List<StepListDto>();
 }
