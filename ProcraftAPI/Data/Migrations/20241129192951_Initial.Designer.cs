@@ -12,7 +12,7 @@ using ProcraftAPI.Data.Context;
 namespace ProcraftAPI.Data.Migrations
 {
     [DbContext(typeof(ProcraftDbContext))]
-    [Migration("20241130230856_Initial")]
+    [Migration("20241129192951_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -191,9 +191,6 @@ namespace ProcraftAPI.Data.Migrations
                     b.Property<DateTime>("FinishForecast")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("FinishedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("ProcessId")
                         .HasColumnType("uuid");
 
@@ -201,9 +198,6 @@ namespace ProcraftAPI.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartForecast")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("StartedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")

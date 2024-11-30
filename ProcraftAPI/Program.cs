@@ -85,10 +85,6 @@ if (builder.Environment.IsProduction())
     );
 }
 
-string port = Environment.GetEnvironmentVariable("PORT") ?? "6000";
-
-string httpsPort = Environment.GetEnvironmentVariable("HTTPS_PORT") ?? "6001";
-
 var secureKey = Environment.GetEnvironmentVariable("SECURE_KEY") ?? "";
 
 var secretServerKey = Encoding.UTF8.GetBytes(secureKey);
@@ -124,12 +120,6 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Procraft",
-        Version = "v1"
-    });
-
     options.AddSecurityDefinition("Bearer",
         new OpenApiSecurityScheme
         {
@@ -155,17 +145,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-bool buildForDevelopment = builder.Environment.IsDevelopment();
-
-if (buildForDevelopment)
-{
-    string appUrls = $"http://*:{port};https://*:{httpsPort}";
-
-    builder.WebHost.UseUrls(appUrls);
-}
-
-
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -187,4 +166,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run($"http://*:{port}");
+app.Run();

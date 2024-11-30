@@ -10,7 +10,5 @@ public record StepListDto
     public Progress Progress { get; init; }
     public DateTime StartForecast { get; init; }
     public DateTime FinishForecast { get; init; }
-    public DateTime? StartedAt { get; init; }
-    public DateTime? FinishedAt { get; init; }
     public Guid ProcessId { get; init; }
 }
