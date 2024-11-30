@@ -19,6 +19,9 @@ public class GroupsController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(typeof(GroupDto), 201)]
+    [ProducesErrorResponseType(type: typeof(string))]
+    [Produces("application/json")]
     public async Task<IActionResult> CreateGroupAsync([FromBody] NewGroupDto dto)
     {
         var groupId = Guid.NewGuid();
@@ -44,6 +47,8 @@ public class GroupsController : ControllerBase
 
     [Authorize]
     [HttpGet]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> GetGroupsAsync()
     {
         var Groups = await _context.Group
@@ -84,7 +89,7 @@ public class GroupsController : ControllerBase
                 Description = u.Description,
                 PhoneNumber = u.PhoneNumber,
                 Cpf = u.Cpf,
-                Email= u.Authentication.Email,
+                Email = u.Authentication.Email,
                 GroupId = u.GroupId
             }).ToList()
         };
@@ -94,6 +99,8 @@ public class GroupsController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteGroup(Guid id)
     {
         var group = await _context.Group.FindAsync(id);
