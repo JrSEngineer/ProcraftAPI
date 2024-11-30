@@ -188,6 +188,9 @@ namespace ProcraftAPI.Data.Migrations
                     b.Property<DateTime>("FinishForecast")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("FinishedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("ProcessId")
                         .HasColumnType("uuid");
 
@@ -195,6 +198,9 @@ namespace ProcraftAPI.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("StartForecast")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("StartedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
