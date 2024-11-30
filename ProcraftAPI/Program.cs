@@ -87,8 +87,6 @@ if (builder.Environment.IsProduction())
 
 string port = Environment.GetEnvironmentVariable("PORT") ?? "6000";
 
-string httpsPort = Environment.GetEnvironmentVariable("HTTPS_PORT") ?? "6001";
-
 var secureKey = Environment.GetEnvironmentVariable("SECURE_KEY") ?? "";
 
 var secretServerKey = Encoding.UTF8.GetBytes(secureKey);
@@ -155,12 +153,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-string appUrls = builder.Environment.IsDevelopment()
-    ? $"http://*:{port};https://*:{httpsPort}"
-    : $"http://*:{port}";
-
-builder.WebHost.UseUrls(appUrls);
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -182,4 +174,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+app.Run($"http://*:{port}");
