@@ -270,7 +270,7 @@ namespace ProcraftAPI.Controllers
 
             action.Title = dto.Title;
             action.Description = dto.Description;
-            action.Progress = Progress.Started;
+            action.Progress = dto.Progress;
 
             await _context.SaveChangesAsync();
 
