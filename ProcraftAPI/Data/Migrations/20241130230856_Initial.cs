@@ -201,6 +201,8 @@ namespace ProcraftAPI.Data.Migrations
                     Progress = table.Column<int>(type: "integer", nullable: false),
                     StartForecast = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     FinishForecast = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    StartedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    FinishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ProcessId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
