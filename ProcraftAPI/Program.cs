@@ -155,11 +155,16 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-string appUrls = builder.Environment.IsDevelopment()
-    ? $"http://*:{port};https://*:{httpsPort}"
-    : $"http://*:{port}";
+bool buildForDevelopment = builder.Environment.IsDevelopment();
 
-builder.WebHost.UseUrls(appUrls);
+if (buildForDevelopment)
+{
+    string appUrls = $"http://*:{port};https://*:{httpsPort}";
+
+    builder.WebHost.UseUrls(appUrls);
+}
+
+
 
 var app = builder.Build();
 
@@ -182,4 +187,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+app.Run($"http://*:{port}");
