@@ -255,36 +255,16 @@ public class ProcessesController : ControllerBase
             }).ToList()
         };
 
-        var processDto = new ProcessDto
+        var responseMessage = dtoList.Count() > 1
+            ? $"{dtoList.Count()} Users added to process {processId}."
+            : $"{dtoList.Count()} User added to process {processId}.";
+
+        var response = new
         {
-            Id = process.Id,
-            Title = process.Title,
-            Description = process.Description,
-            Progress = process.Progress,
-            Users = process.Users.Select(u => new UserListDto
-            {
-                Id = u.Id,
-                FullName = u.FullName,
-                ProfileImage = u.ProfileImage,
-                Description = u.Description,
-                PhoneNumber = u.PhoneNumber,
-                Cpf = u.Cpf,
-                Email = u.Authentication.Email,
-                GroupId = u.GroupId,
-            }).ToList(),
-            Scope = scopeDto,
-            Steps = process.Steps.Select(s => new StepListDto
-            {
-                Id = s.Id,
-                Title = s.Title,
-                Description = s.Description,
-                StartForecast = s.StartForecast,
-                FinishForecast = s.FinishForecast,
-                ProcessId = process.Id
-            }).ToList(),
+            Message = responseMessage
         };
 
-        return Ok(processDto);
+        return Ok(response);
     }
 
 
