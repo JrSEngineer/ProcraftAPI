@@ -1,6 +1,7 @@
 ﻿using ProcraftAPI.Dtos.Process.Scope;
 using ProcraftAPI.Dtos.Process.Step;
 using ProcraftAPI.Dtos.User;
+using ProcraftAPI.Dtos.User.Manager;
 using ProcraftAPI.Enums;
 
 namespace ProcraftAPI.Dtos.Process;

@@ -27,6 +27,8 @@ builder.Services.AddCors(options =>
 
 if (builder.Environment.IsDevelopment())
 {
+    string port = Environment.GetEnvironmentVariable("PORT") ?? "6000";
+
     var connectionString = settings?.GetConnectionString();
 
     builder.Services.AddDbContext<ProcraftDbContext>(options =>
@@ -59,6 +61,10 @@ if (builder.Environment.IsDevelopment())
 
 if (builder.Environment.IsProduction())
 {
+    string port = Environment.GetEnvironmentVariable("PORT") ?? "6000";
+
+    string httpsPort = Environment.GetEnvironmentVariable("HTTPS_PORT") ?? "6000";
+
     var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
     builder.Services.AddDbContext<ProcraftDbContext>(options =>
@@ -84,9 +90,9 @@ if (builder.Environment.IsProduction())
         segmentDelimiter
         )
     );
-}
 
-string port = Environment.GetEnvironmentVariable("PORT") ?? "6000";
+    builder.WebHost.UseUrls($"http://*:{port};https://*:{httpsPort}");
+}
 
 var secureKey = Environment.GetEnvironmentVariable("SECURE_KEY") ?? "";
 
@@ -173,4 +179,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run($"http://*:{port}");
+app.Run();

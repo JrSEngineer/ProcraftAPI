@@ -20,6 +20,7 @@ services:
       dockerfile: ProcraftAPI/Dockerfile
     ports:
         - 7000:7000
+        - 7001:7001
     develop:
       watch:
         - path: ./
@@ -27,4 +28,5 @@ services:
     environment:
         - SECURE_KEY="84592384askdjfaksjdq234"0980a80s98a0d9808iodfsxcvnafg;/sd]sfa[gpsdojpih8ahd]
         - PORT=7000
+        - HTTPS_PORT=7001
   

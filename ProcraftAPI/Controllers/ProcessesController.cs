@@ -7,6 +7,7 @@ using ProcraftAPI.Dtos.Process.Ability;
 using ProcraftAPI.Dtos.Process.Scope;
 using ProcraftAPI.Dtos.Process.Step;
 using ProcraftAPI.Dtos.User;
+using ProcraftAPI.Dtos.User.Manager;
 using ProcraftAPI.Entities.Process;
 using ProcraftAPI.Entities.Process.Scope;
 using ProcraftAPI.Entities.Process.Step;
@@ -147,7 +148,8 @@ public class ProcessesController : ControllerBase
             Progress = processData.Progress,
             Manager = new ManagerDto
             {
-                ManagerId = managerForProcessCreation.Id,
+                Id = managerForProcessCreation.Id,
+                UserId = managerForProcessCreation.UserId,
                 ProcessId = processId,
                 ProfileImage = managerForProcessCreation.ProfileImage,
                 Email = managerForProcessCreation.Email
@@ -352,8 +354,9 @@ public class ProcessesController : ControllerBase
             FinishedAt = process.FinishedAt,
             Manager = new ManagerDto
             {
+                Id = process.Manager.Id,
+                UserId = process.Manager.Id,
                 ProcessId = process.Id,
-                ManagerId = process.Manager.Id,
                 Email = process.Manager.Email,
                 ProfileImage = process.Manager.ProfileImage,
             },
