@@ -25,18 +25,15 @@ public class AuthenticationController : ControllerBase
     private readonly ProcraftDbContext _context;
     private readonly ITokenService _tokenService;
     private readonly IHashService _hashService;
-    private readonly RestClient _client;
 
     public AuthenticationController(
         ProcraftDbContext context,
         ITokenService tokenService,
-        IHashService hashService,
-        RestClient client)
+        IHashService hashService)
     {
         _context = context;
         _tokenService = tokenService;
         _hashService = hashService;
-        _client = client;
     }
 
     [HttpPost("register")]
@@ -251,7 +248,7 @@ public class AuthenticationController : ControllerBase
         return Ok(dto);
     }
 
-    [HttpPost("send-recovery-code")]
+  /*  [HttpPost("send-recovery-code")]
     public async Task<IActionResult> UpdatePassword([FromBody] RecoveryCodeEmailDto dto)
     {
 
@@ -284,6 +281,6 @@ public class AuthenticationController : ControllerBase
         {
             return StatusCode(500);
         }
-    }
+    }*/
 
 }
