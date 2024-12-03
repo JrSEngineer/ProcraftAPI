@@ -146,11 +146,10 @@ public class ProcessesController : ControllerBase
             Title = processData.Title,
             Description = processData.Description,
             Progress = processData.Progress,
-            Manager = new ManagerDto
+            Manager = new ManagerListDto
             {
                 Id = managerForProcessCreation.Id,
                 UserId = managerForProcessCreation.UserId,
-                ProcessId = processId,
                 ProfileImage = managerForProcessCreation.ProfileImage,
                 Email = managerForProcessCreation.Email
             },
@@ -352,11 +351,10 @@ public class ProcessesController : ControllerBase
             FinishForecast = process.FinishForecast,
             StartedAt = process.StartedAt,
             FinishedAt = process.FinishedAt,
-            Manager = new ManagerDto
+            Manager = new ManagerListDto
             {
                 Id = process.Manager.Id,
                 UserId = process.Manager.Id,
-                ProcessId = process.Id,
                 Email = process.Manager.Email,
                 ProfileImage = process.Manager.ProfileImage,
             },

@@ -14,6 +14,7 @@ using RestSharp;
 using ProcraftAPI.Dtos.Authenticarion;
 using RestSharp.Authenticators;
 using System.Threading;
+using ProcraftAPI.Dtos.User.Manager;
 
 namespace ProcraftAPI.Controllers;
 
@@ -170,6 +171,7 @@ public class AuthenticationController : ControllerBase
         var userData = await _context.User
             .Where(u => u.Id == authenticationData.UserId)
             .Include(u => u.Authentication)
+            .Include(u => u.Manager)
             .Include(u => u.Address)
             .Include(u => u.Processes)
             .Include(u => u.Steps)
@@ -192,6 +194,13 @@ public class AuthenticationController : ControllerBase
                 Role = userData.Authentication.Role,
                 AccountStatus = userData.Authentication.AccountStatus,
                 UserId = userData!.Id
+            },
+            Manager = new ManagerListDto
+            {
+                Id = userData.Manager.Id,
+                UserId = userData.Id,
+                Email = userData.Authentication.Email,
+                ProfileImage = userData.ProfileImage,
             },
             Address = new AddressDto
             {
@@ -248,39 +257,39 @@ public class AuthenticationController : ControllerBase
         return Ok(dto);
     }
 
-  /*  [HttpPost("send-recovery-code")]
-    public async Task<IActionResult> UpdatePassword([FromBody] RecoveryCodeEmailDto dto)
-    {
+    /*  [HttpPost("send-recovery-code")]
+      public async Task<IActionResult> UpdatePassword([FromBody] RecoveryCodeEmailDto dto)
+      {
 
-        try
-        {
-            var userAccount = await _context.Authentication.FindAsync(dto.Email);
+          try
+          {
+              var userAccount = await _context.Authentication.FindAsync(dto.Email);
 
-            if (userAccount == null)
-            {
-                return NotFound(new
-                {
-                    Message = $"Email {dto.Email} not found."
-                });
-            }
+              if (userAccount == null)
+              {
+                  return NotFound(new
+                  {
+                      Message = $"Email {dto.Email} not found."
+                  });
+              }
 
-            var request = new RestRequest("api/send", method: Method.Post);
+              var request = new RestRequest("api/send", method: Method.Post);
 
-            request.AddBody(new
-            {
+              request.AddBody(new
+              {
 
-            });
-
-
-            var response = await _client.PostAsync(request);
+              });
 
 
-            return NoContent();
-        }
-        catch (Exception)
-        {
-            return StatusCode(500);
-        }
-    }*/
+              var response = await _client.PostAsync(request);
+
+
+              return NoContent();
+          }
+          catch (Exception)
+          {
+              return StatusCode(500);
+          }
+      }*/
 
 }

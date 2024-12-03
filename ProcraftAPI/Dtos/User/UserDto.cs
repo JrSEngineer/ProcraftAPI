@@ -3,6 +3,7 @@ using ProcraftAPI.Dtos.Process.Step;
 using ProcraftAPI.Dtos.Process.Step.Action;
 using ProcraftAPI.Dtos.Security;
 using ProcraftAPI.Dtos.User.Address;
+using ProcraftAPI.Dtos.User.Manager;
 
 namespace ProcraftAPI.Dtos.User;
 
@@ -17,7 +18,7 @@ public record UserDto
     public string Cpf { get; init; } = string.Empty;
     public AddressDto Address { get; init; } = null!;
     public AuthenticationDto Authentication { get; init; } = null!;
-
+    public ManagerListDto? Manager { get; init; } = null!;
     public List<ProcessListDto>? Processes { get; init; } = new List<ProcessListDto>();
     public List<StepListDto>? Steps { get; init; } = new List<StepListDto>();
     public List<ActionDto>? Actions { get; init; } = new List<ActionDto>();

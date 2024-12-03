@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /ProcraftAPI/obj/Debug/net8.0/ProcraftAPI.AssemblyInfoInputs.cache
 /ProcraftAPI/obj/Debug/net8.0/ProcraftAPI.AssemblyInfo.cs
+/ProcraftAPI/bin/Debug/net8.0/ProcraftAPI.dll
+/ProcraftAPI/bin/Debug/net8.0/ProcraftAPI.exe
+/ProcraftAPI/bin/Debug/net8.0/ProcraftAPI.pdb
