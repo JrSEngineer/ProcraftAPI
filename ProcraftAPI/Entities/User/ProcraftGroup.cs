@@ -7,4 +7,5 @@ public class ProcraftGroup
     public string Name { get; set; } = string.Empty;
 
     public List<ProcraftUser> Members { get; set; } = new List<ProcraftUser>();
+    public List<ProcessManager> Managers { get; set; } = new List<ProcessManager>();
 }

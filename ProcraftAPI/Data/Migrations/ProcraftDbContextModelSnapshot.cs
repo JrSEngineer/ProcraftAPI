@@ -224,11 +224,22 @@ namespace ProcraftAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("ProfileImage")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Manager");
                 });
@@ -270,6 +281,9 @@ namespace ProcraftAPI.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ManagerId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("PhoneNumber")
@@ -440,6 +454,23 @@ namespace ProcraftAPI.Data.Migrations
                     b.Navigation("Process");
                 });
 
+            modelBuilder.Entity("ProcraftAPI.Entities.User.ProcessManager", b =>
+                {
+                    b.HasOne("ProcraftAPI.Entities.User.ProcraftGroup", null)
+                        .WithMany("Managers")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProcraftAPI.Entities.User.ProcraftUser", "User")
+                        .WithOne("Manager")
+                        .HasForeignKey("ProcraftAPI.Entities.User.ProcessManager", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftUser", b =>
                 {
                     b.HasOne("ProcraftAPI.Entities.User.UserAddress", "Address")
@@ -494,6 +525,8 @@ namespace ProcraftAPI.Data.Migrations
 
             modelBuilder.Entity("ProcraftAPI.Entities.User.ProcraftGroup", b =>
                 {
+                    b.Navigation("Managers");
+
                     b.Navigation("Members");
                 });
 
@@ -503,6 +536,8 @@ namespace ProcraftAPI.Data.Migrations
 
                     b.Navigation("Authentication")
                         .IsRequired();
+
+                    b.Navigation("Manager");
 
                     b.Navigation("ProcessesUsers");
 

@@ -13,7 +13,7 @@ services:
         - .pg_data:/var/lib/postgresql/pg_data
 
   procraftapi:
-    image: devjrsoftwareengineer/procraft:v1
+    image: devjrsoftwareengineer/procraft-dev:v1
     container_name: procraft-api
     build:
       context: .

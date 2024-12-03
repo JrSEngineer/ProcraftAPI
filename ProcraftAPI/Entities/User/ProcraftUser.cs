@@ -13,9 +13,11 @@ public class ProcraftUser
     public string Description { get; set; } = string.Empty;
     public string PhoneNumber { get; set; } = string.Empty;
     public string Cpf { get; set; } = string.Empty;
+    public Guid GroupId { get; set; }
+    public Guid? ManagerId { get; set; }
     public ProcraftAuthentication Authentication { get; set; } = null!;
     public UserAddress Address { get; set; } = null!;
-    public Guid GroupId { get; set; }
+    public ProcessManager? Manager { get; set; } = null!;
     public List<ProcessUser> ProcessesUsers { get; set; } = new List<ProcessUser>();
     public List<ProcraftProcess> Processes { get; set; } = new List<ProcraftProcess>();
     public List<StepUser> StepUsers { get; set; } = new List<StepUser>();

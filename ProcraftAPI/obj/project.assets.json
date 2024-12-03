@@ -2,6 +2,35 @@
   "version": 3,
   "targets": {
     "net8.0": {
+      "AWSSDK.Core/3.7.400.58": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/AWSSDK.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.Core.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
+      "AWSSDK.S3/3.7.408.1": {
+        "type": "package",
+        "dependencies": {
+          "AWSSDK.Core": "[3.7.400.58, 4.0.0)"
+        },
+        "compile": {
+          "lib/net8.0/AWSSDK.S3.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.S3.dll": {
+            "related": ".pdb;.xml"
+          }
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "type": "package",
         "compile": {
@@ -1103,6 +1132,19 @@
           }
         }
       },
+      "RestSharp/112.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/RestSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/RestSharp.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.4.0": {
         "type": "package",
         "dependencies": {
@@ -1573,6 +1615,67 @@
     }
   },
   "libraries": {
+    "AWSSDK.Core/3.7.400.58": {
+      "sha512": "tsNRJMOxCpd6FXZq/3y3ei3MMEWmHO6uFgIg8GAkZS74hxtfDB6zyycAqd9vbo9UJBbX7lmtYfDPQ0sg2CUDRw==",
+      "type": "package",
+      "path": "awssdk.core/3.7.400.58",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "awssdk.core.3.7.400.58.nupkg.sha512",
+        "awssdk.core.nuspec",
+        "images/AWSLogo.png",
+        "lib/net35/AWSSDK.Core.dll",
+        "lib/net35/AWSSDK.Core.pdb",
+        "lib/net35/AWSSDK.Core.xml",
+        "lib/net45/AWSSDK.Core.dll",
+        "lib/net45/AWSSDK.Core.pdb",
+        "lib/net45/AWSSDK.Core.xml",
+        "lib/net8.0/AWSSDK.Core.dll",
+        "lib/net8.0/AWSSDK.Core.pdb",
+        "lib/net8.0/AWSSDK.Core.xml",
+        "lib/netcoreapp3.1/AWSSDK.Core.dll",
+        "lib/netcoreapp3.1/AWSSDK.Core.pdb",
+        "lib/netcoreapp3.1/AWSSDK.Core.xml",
+        "lib/netstandard2.0/AWSSDK.Core.dll",
+        "lib/netstandard2.0/AWSSDK.Core.pdb",
+        "lib/netstandard2.0/AWSSDK.Core.xml",
+        "tools/account-management.ps1"
+      ]
+    },
+    "AWSSDK.S3/3.7.408.1": {
+      "sha512": "73PmGWtNhpVXM/9oQeZsH9y6zuS2mA2soif7ZoU71CDvl8l58zHsOMCqzUUCk+B49BH7qGO2uV/sNtPkEY3w5w==",
+      "type": "package",
+      "path": "awssdk.s3/3.7.408.1",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "analyzers/dotnet/cs/AWSSDK.S3.CodeAnalysis.dll",
+        "analyzers/dotnet/cs/SharedAnalysisCode.dll",
+        "awssdk.s3.3.7.408.1.nupkg.sha512",
+        "awssdk.s3.nuspec",
+        "images/AWSLogo.png",
+        "lib/net35/AWSSDK.S3.dll",
+        "lib/net35/AWSSDK.S3.pdb",
+        "lib/net35/AWSSDK.S3.xml",
+        "lib/net45/AWSSDK.S3.dll",
+        "lib/net45/AWSSDK.S3.pdb",
+        "lib/net45/AWSSDK.S3.xml",
+        "lib/net8.0/AWSSDK.S3.dll",
+        "lib/net8.0/AWSSDK.S3.pdb",
+        "lib/net8.0/AWSSDK.S3.xml",
+        "lib/netcoreapp3.1/AWSSDK.S3.dll",
+        "lib/netcoreapp3.1/AWSSDK.S3.pdb",
+        "lib/netcoreapp3.1/AWSSDK.S3.xml",
+        "lib/netstandard2.0/AWSSDK.S3.dll",
+        "lib/netstandard2.0/AWSSDK.S3.pdb",
+        "lib/netstandard2.0/AWSSDK.S3.xml",
+        "tools/install.ps1",
+        "tools/uninstall.ps1"
+      ]
+    },
     "Humanizer.Core/2.14.1": {
       "sha512": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw==",
       "type": "package",
@@ -3335,6 +3438,31 @@
         "postgresql.png"
       ]
     },
+    "RestSharp/112.1.0": {
+      "sha512": "bOUGNZqhhv/QeCXHTKEUil846yBjwWXpzPKjO67kFvaAOoF361z7jLY5BMnuZ6WD2WQRA750sNMcK7MSPCQ5Mg==",
+      "type": "package",
+      "path": "restsharp/112.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net471/RestSharp.dll",
+        "lib/net471/RestSharp.xml",
+        "lib/net48/RestSharp.dll",
+        "lib/net48/RestSharp.xml",
+        "lib/net6.0/RestSharp.dll",
+        "lib/net6.0/RestSharp.xml",
+        "lib/net7.0/RestSharp.dll",
+        "lib/net7.0/RestSharp.xml",
+        "lib/net8.0/RestSharp.dll",
+        "lib/net8.0/RestSharp.xml",
+        "lib/netstandard2.0/RestSharp.dll",
+        "lib/netstandard2.0/RestSharp.xml",
+        "restsharp.112.1.0.nupkg.sha512",
+        "restsharp.nuspec",
+        "restsharp.png"
+      ]
+    },
     "Swashbuckle.AspNetCore/6.4.0": {
       "sha512": "eUBr4TW0up6oKDA5Xwkul289uqSMgY0xGN4pnbOIBqCcN9VKGGaPvHX3vWaG/hvocfGDP+MGzMA0bBBKz2fkmQ==",
       "type": "package",
@@ -4117,6 +4245,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "AWSSDK.S3 >= 3.7.408.1",
       "Microsoft.AspNetCore.Authentication >= 2.1.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.8",
       "Microsoft.EntityFrameworkCore >= 8.0.8",
@@ -4124,7 +4253,8 @@
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.8",
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets >= 1.21.0",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 8.0.8",
-      "Swashbuckle.AspNetCore >= 6.4.0"
+      "Swashbuckle.AspNetCore >= 6.4.0",
+      "restsharp >= 112.1.0"
     ]
   },
   "packageFolders": {
@@ -4172,6 +4302,10 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "AWSSDK.S3": {
+            "target": "Package",
+            "version": "[3.7.408.1, )"
+          },
           "Microsoft.AspNetCore.Authentication": {
             "target": "Package",
             "version": "[2.1.0, )"
@@ -4207,6 +4341,10 @@
           "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[6.4.0, )"
+          },
+          "restsharp": {
+            "target": "Package",
+            "version": "[112.1.0, )"
           }
         },
         "imports": [

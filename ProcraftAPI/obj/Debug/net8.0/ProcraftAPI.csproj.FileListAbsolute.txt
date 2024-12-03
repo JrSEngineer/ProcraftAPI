@@ -112,3 +112,6 @@ C:\Users\Junior\Documents\Fullstack\Procraft\Backend\ProcraftAPI\ProcraftAPI\bin
 C:\Users\Junior\Documents\Fullstack\Procraft\Backend\ProcraftAPI\ProcraftAPI\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\Junior\Documents\Fullstack\Procraft\Backend\ProcraftAPI\ProcraftAPI\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\Junior\Documents\Fullstack\Procraft\Backend\ProcraftAPI\ProcraftAPI\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\Junior\Documents\Fullstack\Procraft\Backend\ProcraftAPI\ProcraftAPI\bin\Debug\net8.0\AWSSDK.Core.dll
+C:\Users\Junior\Documents\Fullstack\Procraft\Backend\ProcraftAPI\ProcraftAPI\bin\Debug\net8.0\AWSSDK.S3.dll
+C:\Users\Junior\Documents\Fullstack\Procraft\Backend\ProcraftAPI\ProcraftAPI\bin\Debug\net8.0\RestSharp.dll

@@ -42,19 +42,6 @@ namespace ProcraftAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Manager",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProfileImage = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Manager", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Scope",
                 columns: table => new
                 {
@@ -75,8 +62,9 @@ namespace ProcraftAPI.Data.Migrations
                     Description = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     Cpf = table.Column<string>(type: "text", nullable: false),
-                    AddressId = table.Column<Guid>(type: "uuid", nullable: false),
-                    GroupId = table.Column<Guid>(type: "uuid", nullable: false)
+                    GroupId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ManagerId = table.Column<Guid>(type: "uuid", nullable: true),
+                    AddressId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -116,6 +104,54 @@ namespace ProcraftAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Authentication",
+                columns: table => new
+                {
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false),
+                    AccountStatus = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Authentication", x => x.Email);
+                    table.ForeignKey(
+                        name: "FK_Authentication_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Manager",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProfileImage = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    GroupId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Manager", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Manager_Group_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "Group",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Manager_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Process",
                 columns: table => new
                 {
@@ -144,27 +180,6 @@ namespace ProcraftAPI.Data.Migrations
                         column: x => x.ScopeId,
                         principalTable: "Scope",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Authentication",
-                columns: table => new
-                {
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<int>(type: "integer", nullable: false),
-                    AccountStatus = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Authentication", x => x.Email);
-                    table.ForeignKey(
-                        name: "FK_Authentication_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,6 +308,17 @@ namespace ProcraftAPI.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Manager_GroupId",
+                table: "Manager",
+                column: "GroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Manager_UserId",
+                table: "Manager",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Process_ManagerId",
                 table: "Process",
                 column: "ManagerId");
@@ -350,22 +376,22 @@ namespace ProcraftAPI.Data.Migrations
                 name: "Step");
 
             migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
                 name: "Process");
-
-            migrationBuilder.DropTable(
-                name: "Address");
-
-            migrationBuilder.DropTable(
-                name: "Group");
 
             migrationBuilder.DropTable(
                 name: "Manager");
 
             migrationBuilder.DropTable(
                 name: "Scope");
+
+            migrationBuilder.DropTable(
+                name: "User");
+
+            migrationBuilder.DropTable(
+                name: "Address");
+
+            migrationBuilder.DropTable(
+                name: "Group");
         }
     }
 }

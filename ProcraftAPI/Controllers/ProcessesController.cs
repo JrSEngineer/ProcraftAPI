@@ -6,7 +6,6 @@ using ProcraftAPI.Dtos.Process;
 using ProcraftAPI.Dtos.Process.Ability;
 using ProcraftAPI.Dtos.Process.Scope;
 using ProcraftAPI.Dtos.Process.Step;
-using ProcraftAPI.Dtos.Process.Step.Action;
 using ProcraftAPI.Dtos.User;
 using ProcraftAPI.Entities.Process;
 using ProcraftAPI.Entities.Process.Scope;
@@ -35,6 +34,7 @@ public class ProcessesController : ControllerBase
                     .Where(g => g.Id == groupId)
                     .Include(g => g.Members)
                     .ThenInclude(m => m.Authentication)
+                    .Include(g => g.Managers)
                     .FirstOrDefaultAsync();
 
         if (group == null)
@@ -49,22 +49,17 @@ public class ProcessesController : ControllerBase
 
         var usersList = group.Members.ToList();
 
-        var userForProcessCreation = usersList.Find(u => u.Id == dto.ManagerId);
+        var managersList = group.Managers.ToList();
 
-        if (userForProcessCreation == null)
+        var managerForProcessCreation = managersList.Find(m => m.Id == dto.ManagerId);
+
+        if (managerForProcessCreation == null)
         {
-            return NotFound(new
+            return BadRequest(new
             {
-                Message = $"User ith id {dto.ManagerId} not found."
+                Message = $"There is no manager registered with id {dto.ManagerId}."
             });
         }
-
-        var manager = new ProcessManager
-        {
-            Id = userForProcessCreation.Id,
-            Email = userForProcessCreation.Authentication.Email,
-            ProfileImage = userForProcessCreation.ProfileImage
-        };
 
         ProcessScope? scope = null;
 
@@ -105,7 +100,6 @@ public class ProcessesController : ControllerBase
             Title = dto.Title,
             Description = dto.Description,
             ManagerId = dto.ManagerId,
-            Manager = manager,
             Scope = scope
         };
 
@@ -153,10 +147,10 @@ public class ProcessesController : ControllerBase
             Progress = processData.Progress,
             Manager = new ManagerDto
             {
-                ManagerId = userForProcessCreation.Id,
+                ManagerId = managerForProcessCreation.Id,
                 ProcessId = processId,
-                ProfileImage = userForProcessCreation.ProfileImage,
-                Email = userForProcessCreation.Authentication.Email
+                ProfileImage = managerForProcessCreation.ProfileImage,
+                Email = managerForProcessCreation.Email
             },
             Users = processData.Users.Select(u => new UserListDto
             {

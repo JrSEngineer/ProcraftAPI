@@ -33,19 +33,23 @@ namespace ProcraftAPI.Data.Context
         {
             builder.Entity<ProcraftGroup>().HasMany(g => g.Members).WithOne().HasForeignKey(m => m.GroupId).OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<ProcraftGroup>().HasMany(g => g.Managers).WithOne().HasForeignKey(m => m.GroupId).OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<ProcraftAuthentication>().HasKey(a => a.Email);
-
-            builder.Entity<ProcraftProcess>().HasMany(p => p.Steps).WithOne(s => s.Process).HasForeignKey(s => s.ProcessId).OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<ProcraftProcess>().HasMany(p => p.Users).WithMany(s => s.Processes).UsingEntity<ProcessUser>();
-
-            builder.Entity<ProcraftUser>().HasMany(u => u.Actions).WithOne().HasForeignKey(u => u.UserId).OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<ProcessManager>().HasMany(p => p.Processes).WithOne(m => m.Manager).HasForeignKey(p => p.ManagerId).IsRequired();
 
             builder.Entity<ProcraftUser>().HasOne(u => u.Authentication).WithOne(a => a.User).OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ProcraftUser>().HasMany(u => u.Steps).WithMany(s => s.Users).UsingEntity<StepUser>();
+
+            builder.Entity<ProcraftUser>().HasMany(u => u.Actions).WithOne().HasForeignKey(u => u.UserId).OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ProcraftUser>().HasOne(u => u.Manager).WithOne(m => m.User).OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ProcessManager>().HasMany(p => p.Processes).WithOne(m => m.Manager).HasForeignKey(p => p.ManagerId).IsRequired();
+
+            builder.Entity<ProcraftProcess>().HasMany(p => p.Users).WithMany(s => s.Processes).UsingEntity<ProcessUser>();
+
+            builder.Entity<ProcraftProcess>().HasMany(p => p.Steps).WithOne(s => s.Process).HasForeignKey(s => s.ProcessId).OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ProcessStep>().HasMany(u => u.Actions).WithOne().HasForeignKey(a => a.StepId).OnDelete(DeleteBehavior.Cascade);
 

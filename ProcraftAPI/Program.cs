@@ -6,6 +6,7 @@ using ProcraftAPI.Data.Context;
 using ProcraftAPI.Data.Settings;
 using ProcraftAPI.Interfaces;
 using ProcraftAPI.Services;
+using RestSharp;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -161,8 +162,6 @@ if (app.Environment.IsDevelopment())
 
     app.UseSwaggerUI();
 }
-
-app.MapGet("test", () => $"API NOW RUNNING -- {DateTime.UtcNow} --");
 
 app.UseCors("procraft-policy");
 

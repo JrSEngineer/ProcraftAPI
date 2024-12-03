@@ -10,6 +10,10 @@ using ProcraftAPI.Dtos.User.Address;
 using ProcraftAPI.Entities.User;
 using ProcraftAPI.Interfaces;
 using ProcraftAPI.Security.Authentication;
+using RestSharp;
+using ProcraftAPI.Dtos.Authenticarion;
+using RestSharp.Authenticators;
+using System.Threading;
 
 namespace ProcraftAPI.Controllers;
 
@@ -21,15 +25,18 @@ public class AuthenticationController : ControllerBase
     private readonly ProcraftDbContext _context;
     private readonly ITokenService _tokenService;
     private readonly IHashService _hashService;
+    private readonly RestClient _client;
 
     public AuthenticationController(
         ProcraftDbContext context,
         ITokenService tokenService,
-        IHashService hashService)
+        IHashService hashService,
+        RestClient client)
     {
         _context = context;
         _tokenService = tokenService;
         _hashService = hashService;
+        _client = client;
     }
 
     [HttpPost("register")]
@@ -242,6 +249,41 @@ public class AuthenticationController : ControllerBase
         }
 
         return Ok(dto);
+    }
+
+    [HttpPost("send-recovery-code")]
+    public async Task<IActionResult> UpdatePassword([FromBody] RecoveryCodeEmailDto dto)
+    {
+
+        try
+        {
+            var userAccount = await _context.Authentication.FindAsync(dto.Email);
+
+            if (userAccount == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"Email {dto.Email} not found."
+                });
+            }
+
+            var request = new RestRequest("api/send", method: Method.Post);
+
+            request.AddBody(new
+            {
+
+            });
+
+
+            var response = await _client.PostAsync(request);
+
+
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
     }
 
 }

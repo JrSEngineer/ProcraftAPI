@@ -207,6 +207,7 @@ namespace ProcraftAPI.Controllers
             }
 
             action.FinishedAt = dto.FinishedAt;
+
             action.Progress = Progress.Finished;
 
             await _context.SaveChangesAsync();
@@ -280,9 +281,10 @@ namespace ProcraftAPI.Controllers
                 Title = action.Title,
                 Description = action.Description,
                 Progress = action.Progress,
+                StartedAt = action.StartedAt,
+                FinishedAt = action.FinishedAt,
                 UserId = action.UserId,
                 StepId = action.StepId,
-                Duration = action.Duration
             };
 
             return Ok(actionDto);
