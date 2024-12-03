@@ -58,7 +58,7 @@ namespace ProcraftAPI.Controllers
             var newManager = new ProcessManager
             {
                 Id = managerId,
-                GroupId = dto.GroupId,
+                GroupId = group.Id,
                 Email = user.Authentication.Email,
                 ProfileImage = user.ProfileImage,
                 UserId = user.Id
@@ -99,7 +99,7 @@ namespace ProcraftAPI.Controllers
             var managers = group.Managers.Select(m => new ManagerListDto
             {
                 Id = m.Id,
-                UserId = m.Id,
+                UserId = m.UserId,
                 Email = m.Email,
                 ProfileImage = m.ProfileImage
             });

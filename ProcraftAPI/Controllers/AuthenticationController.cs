@@ -178,7 +178,7 @@ public class AuthenticationController : ControllerBase
             .Include(u => u.Actions)
             .FirstOrDefaultAsync();
 
-        ManagerListDto? managerListDto;
+        ManagerListDto? managerListDto = null;
 
         if (userData!.Manager != null)
         {
@@ -189,9 +189,7 @@ public class AuthenticationController : ControllerBase
                 Email = userData.Authentication.Email,
                 ProfileImage = userData.ProfileImage,
             };
-        };
-
-        managerListDto = null;
+        }
 
         var credentialOwner = new UserDto
         {
