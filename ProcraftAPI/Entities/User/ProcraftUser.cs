@@ -17,7 +17,7 @@ public class ProcraftUser
     public Guid? ManagerId { get; set; }
     public ProcraftAuthentication Authentication { get; set; } = null!;
     public UserAddress Address { get; set; } = null!;
-    public ProcessManager? Manager { get; set; } = null!;
+    public ProcessManager? Manager { get; set; }
     public List<ProcessUser> ProcessesUsers { get; set; } = new List<ProcessUser>();
     public List<ProcraftProcess> Processes { get; set; } = new List<ProcraftProcess>();
     public List<StepUser> StepUsers { get; set; } = new List<StepUser>();

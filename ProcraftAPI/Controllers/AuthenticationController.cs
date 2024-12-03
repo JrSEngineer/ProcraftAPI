@@ -178,6 +178,21 @@ public class AuthenticationController : ControllerBase
             .Include(u => u.Actions)
             .FirstOrDefaultAsync();
 
+        ManagerListDto? managerListDto;
+
+        if (userData!.Manager != null)
+        {
+            managerListDto = new ManagerListDto
+            {
+                Id = userData!.Manager.Id,
+                UserId = userData.Id,
+                Email = userData.Authentication.Email,
+                ProfileImage = userData.ProfileImage,
+            };
+        };
+
+        managerListDto = null;
+
         var credentialOwner = new UserDto
         {
             Id = userData!.Id,
@@ -195,13 +210,7 @@ public class AuthenticationController : ControllerBase
                 AccountStatus = userData.Authentication.AccountStatus,
                 UserId = userData!.Id
             },
-            Manager = new ManagerListDto
-            {
-                Id = userData.Manager.Id,
-                UserId = userData.Id,
-                Email = userData.Authentication.Email,
-                ProfileImage = userData.ProfileImage,
-            },
+            Manager = managerListDto,
             Address = new AddressDto
             {
                 Id = userData.Address.Id,

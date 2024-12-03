@@ -17,8 +17,8 @@ public record UserDto
     public Guid GroupId { get; init; }
     public string Cpf { get; init; } = string.Empty;
     public AddressDto Address { get; init; } = null!;
-    public AuthenticationDto Authentication { get; init; } = null!;
-    public ManagerListDto? Manager { get; init; } = null!;
+    public AuthenticationDto Authentication { get; init; }
+    public ManagerListDto? Manager { get; init; }
     public List<ProcessListDto>? Processes { get; init; } = new List<ProcessListDto>();
     public List<StepListDto>? Steps { get; init; } = new List<StepListDto>();
     public List<ActionDto>? Actions { get; init; } = new List<ActionDto>();

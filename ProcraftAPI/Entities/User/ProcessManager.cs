@@ -11,6 +11,6 @@ public class ProcessManager
     public Guid GroupId { get; set; }
     [ForeignKey("User")]
     public Guid UserId { get; set; }
-    public ProcraftUser User { get; set; } = null!;
+    public ProcraftUser? User { get; set; }
     public List<ProcraftProcess> Processes { get; set; } = new List<ProcraftProcess>();
 }
