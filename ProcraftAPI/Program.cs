@@ -29,6 +29,8 @@ if (builder.Environment.IsDevelopment())
 {
     string port = Environment.GetEnvironmentVariable("PORT") ?? "6000";
 
+    string httpsPort = Environment.GetEnvironmentVariable("HTTPS_PORT") ?? "6000";
+
     var connectionString = settings?.GetConnectionString();
 
     builder.Services.AddDbContext<ProcraftDbContext>(options =>
@@ -57,13 +59,13 @@ if (builder.Environment.IsDevelopment())
         )
     );
 
+    builder.WebHost.UseUrls($"http://*:{port};https://*:{httpsPort}");
+
 }
 
 if (builder.Environment.IsProduction())
 {
     string port = Environment.GetEnvironmentVariable("PORT") ?? "6000";
-
-    string httpsPort = Environment.GetEnvironmentVariable("HTTPS_PORT") ?? "6000";
 
     var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
@@ -91,7 +93,7 @@ if (builder.Environment.IsProduction())
         )
     );
 
-    builder.WebHost.UseUrls($"http://*:{port};https://*:{httpsPort}");
+    builder.WebHost.UseUrls($"http://*:{port}");
 }
 
 var secureKey = Environment.GetEnvironmentVariable("SECURE_KEY") ?? "";
