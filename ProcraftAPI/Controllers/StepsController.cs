@@ -22,7 +22,7 @@ public class StepsController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost("process/{processId}")]
+    [HttpPost("in-process/{processId}")]
     public async Task<IActionResult> CreateStepsAsync(Guid processId, [FromBody] List<NewStepDto> dtosList)
     {
         var process = await _context.Process.FindAsync(processId);
@@ -140,7 +140,7 @@ public class StepsController : ControllerBase
                 PhoneNumber = u.PhoneNumber,
                 Cpf = u.Cpf,
                 GroupId = u.GroupId,
-                Email = u.Authentication.Email               
+                Email = u.Authentication.Email
             }).ToList(),
         };
 
@@ -202,30 +202,30 @@ public class StepsController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPatch("{processId}/step/{stepId}")]
-    public async Task<IActionResult> UpdateStepAsync(Guid processId, Guid stepId, UpdateStepDto dto)
+    [HttpPatch("{stepId}/from-user/{userId}")]
+    public async Task<IActionResult> UpdateStepAsync(Guid userId, Guid stepId, UpdateStepDto dto)
     {
-        var process = await _context.Process
+        var user = await _context.User
             .AsNoTracking()
-            .Where(p => p.Id == processId)
+            .Where(p => p.Id == userId)
             .Include(p => p.Steps)
             .FirstOrDefaultAsync();
 
-        if (process == null)
+        if (user == null)
         {
             return NotFound(new
             {
-                Message = $"Process with id {processId} not found."
+                Message = $"User with id {userId} not found."
             });
         }
 
-        bool stepFoundInCurrentProcess = process.Steps.Any(s => s.Id == stepId);
+        var selectedStep = user!.Steps?.Where(s => s.Id == stepId).FirstOrDefault();
 
-        if (!stepFoundInCurrentProcess)
+        if (selectedStep == null)
         {
             return NotFound(new
             {
-                Message = $"Step with id {stepId} not found in current process."
+                Message = $"Step with id {stepId} not found in current user steps."
             });
         }
 
@@ -237,7 +237,20 @@ public class StepsController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        return Ok(process);
+        var stepDto = new StepListDto
+        {
+            Id = selectedStep.Id,
+            Title = selectedStep.Title,
+            Description = selectedStep.Description,
+            Progress = selectedStep.Progress,
+            StartForecast = selectedStep.StartForecast,
+            FinishForecast = selectedStep.FinishForecast,
+            StartedAt = selectedStep.StartedAt,
+            FinishedAt = selectedStep.FinishedAt,
+            ProcessId = selectedStep.ProcessId
+        };
+
+        return Ok(stepDto);
     }
 
     [Authorize(Roles = "Admin")]

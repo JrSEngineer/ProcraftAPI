@@ -102,12 +102,23 @@ public class UsersController : ControllerBase
         return Ok(userDto);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetUserAsync()
+    [HttpGet("from-group/{groupId}")]
+    public async Task<IActionResult> GetUsersAsync(Guid groupId)
     {
-        var users = await _context.User.ToListAsync();
+        var group = await _context.Group
+            .Where(g => g.Id == groupId)
+            .Include(g=> g.Members)
+            .FirstOrDefaultAsync();
 
-        var userDtos = users.Select(u => new UserListDto
+        if(group == null)
+        {
+            return NotFound(new
+            {
+                Message = $"Group with id {groupId} not found."
+            });
+        }
+
+        var userDtos = group.Members.Select(u => new UserListDto
         {
             Id = u.Id,
             FullName = u.FullName,

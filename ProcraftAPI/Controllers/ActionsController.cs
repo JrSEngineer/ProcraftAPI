@@ -236,7 +236,7 @@ namespace ProcraftAPI.Controllers
             return Ok(actionDto);
         }
 
-        [HttpPatch("{id}/user/{userId}")]
+        [HttpPatch("{id}/from-user/{userId}")]
         public async Task<IActionResult> UpdateActionAsync(Guid id, Guid userId, [FromBody] UpdateActionDto dto)
         {
             var user = await _context.User.FindAsync(userId);

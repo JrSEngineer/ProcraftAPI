@@ -28,7 +28,7 @@ public class ProcessesController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost("{groupId}")]
+    [HttpPost("in-group/{groupId}")]
     public async Task<IActionResult> CreateProcessAsync(Guid groupId, [FromBody] NewProcessDto dto)
     {
         var group = await _context.Group
@@ -178,7 +178,7 @@ public class ProcessesController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost("group/{groupId}/process/{processId}/users")]
+    [HttpPost("from-group/{groupId}/to-process/{processId}")]
     public async Task<IActionResult> AddMemberToProcessAsync(Guid processId, Guid groupId, [FromBody] List<UserIdDto> dtoList)
     {
         var group = await _context.Group
@@ -264,7 +264,7 @@ public class ProcessesController : ControllerBase
 
 
     [Authorize(Roles = "Admin")]
-    [HttpDelete("{processId}/users/{userId}")]
+    [HttpDelete("from-process/{processId}/user/{userId}")]
     public async Task<IActionResult> RemoveMemberFromProcessAsync(Guid processId, Guid userId)
     {
         var process = await _context.Process
@@ -299,7 +299,7 @@ public class ProcessesController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("overall/{groupId}")]
+    [HttpGet("from-group/{groupId}")]
     public async Task<IActionResult> GetProcessesAsync(Guid groupId)
     {
         var processes = await _context.Process

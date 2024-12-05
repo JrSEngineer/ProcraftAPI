@@ -37,7 +37,7 @@ public class AuthenticationController : ControllerBase
         _hashService = hashService;
     }
 
-    [HttpPost("register")]
+    [HttpPost("new-user")]
     public async Task<IActionResult> Register([FromBody] NewUserDto dto)
     {
         Guid userId = Guid.NewGuid();
@@ -137,7 +137,7 @@ public class AuthenticationController : ControllerBase
         return Created($"{this.HttpContext.Request.Path}", createdUserDto);
     }
 
-    [HttpPost]
+    [HttpPost("login")]
     public async Task<IActionResult> Authenticate([FromBody] LoginDto dto)
     {
         var authenticationData = await _context.Authentication.FindAsync(dto.email);

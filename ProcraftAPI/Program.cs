@@ -181,4 +181,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+var env = app.Environment.EnvironmentName;
+
+app.MapGet("api/health", () => $"HELLO THERE! API IS RUNNING IN {env} MODE. CURRENT TIME {DateTime.Now}");
+
 app.Run();

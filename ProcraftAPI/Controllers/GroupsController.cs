@@ -21,7 +21,6 @@ public class GroupsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(GroupDto), 201)]
     [ProducesErrorResponseType(type: typeof(string))]
-    [Produces("application/json")]
     public async Task<IActionResult> CreateGroupAsync([FromBody] NewGroupDto dto)
     {
         var groupId = Guid.NewGuid();
