@@ -15,6 +15,9 @@ using ProcraftAPI.Dtos.Authenticarion;
 using RestSharp.Authenticators;
 using System.Threading;
 using ProcraftAPI.Dtos.User.Manager;
+using ProcraftAPI.Services;
+using System.Net;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace ProcraftAPI.Controllers;
 
@@ -26,15 +29,21 @@ public class AuthenticationController : ControllerBase
     private readonly ProcraftDbContext _context;
     private readonly ITokenService _tokenService;
     private readonly IHashService _hashService;
+    private readonly IRestClient _client;
+    private readonly EmailTemplateService _templateService;
 
     public AuthenticationController(
         ProcraftDbContext context,
         ITokenService tokenService,
-        IHashService hashService)
+        IHashService hashService,
+        IRestClient client,
+        EmailTemplateService templateService)
     {
         _context = context;
         _tokenService = tokenService;
         _hashService = hashService;
+        _client = client;
+        _templateService = templateService;
     }
 
     [HttpPost("new-user")]
@@ -264,39 +273,62 @@ public class AuthenticationController : ControllerBase
         return Ok(dto);
     }
 
-    /*  [HttpPost("send-recovery-code")]
-      public async Task<IActionResult> UpdatePassword([FromBody] RecoveryCodeEmailDto dto)
-      {
+    [HttpPost("send-recovery-code")]
+    public async Task<IActionResult> UpdatePassword([FromBody] RecoveryCodeEmailDto dto)
+    {
+        try
+        {
+            var emailSenderAPiUrl = Environment.GetEnvironmentVariable("EMAIL_SENDER") ?? "";
 
-          try
-          {
-              var userAccount = await _context.Authentication.FindAsync(dto.Email);
+            var userAccount = await _context.Authentication
+                .Where(a => a.Email == dto.Email)
+                .Include(a => a.User)
+                .FirstOrDefaultAsync();
 
-              if (userAccount == null)
-              {
-                  return NotFound(new
-                  {
-                      Message = $"Email {dto.Email} not found."
-                  });
-              }
+            if (userAccount == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"Email {dto.Email} not found."
+                });
+            }
 
-              var request = new RestRequest("api/send", method: Method.Post);
+            var request = new RestRequest(emailSenderAPiUrl, method: Method.Post);
 
-              request.AddBody(new
-              {
+            request.AddHeader("Content-Type", "application/json");
 
-              });
+            var emailContent = _templateService.SetHtmlTemplateValues(userAccount.User.FullName, "TKSDFHE");
 
+            var requestBody = new
+            {
+                SenderEmailAddress = "procraft@app.com",
+                ReceiverEmailAddress = userAccount.Email,
+                SenderName = "Procraft",
+                ReceiverName = userAccount.User.FullName,
+                EmailSubject = "Recuperação de Senha",
+                EmailContent = emailContent
+            };
 
-              var response = await _client.PostAsync(request);
+            request.AddJsonBody(requestBody);
 
+            request.RequestFormat = DataFormat.Json;
 
-              return NoContent();
-          }
-          catch (Exception)
-          {
-              return StatusCode(500);
-          }
-      }*/
+            var response = await _client.PostAsync(request);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return BadRequest(new
+                {
+                    Message = $"Error sending email to {userAccount.Email}."
+                });
+            }
+
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"{e.Message}");
+        }
+    }
 
 }

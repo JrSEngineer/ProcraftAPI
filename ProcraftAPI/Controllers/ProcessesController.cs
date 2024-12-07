@@ -331,6 +331,7 @@ public class ProcessesController : ControllerBase
             .Include(p => p.Users)
             .ThenInclude(u => u.Authentication)
             .Include(p => p.Scope)
+            .ThenInclude(s => s.Abilities)
             .FirstOrDefaultAsync();
 
         if (process == null)

@@ -20,3 +20,4 @@ services:
 
     environment:
       - PORT=${PORT}
+      - EMAIL_SENDER=https://sender.up.railway.app/api/send

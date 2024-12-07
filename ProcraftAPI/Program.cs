@@ -25,6 +25,10 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddSingleton<IRestClient, RestClient>(servicesProvider => new RestClient());
+
+builder.Services.AddSingleton<EmailTemplateService>(servicesProvider => new EmailTemplateService());
+
 if (builder.Environment.IsDevelopment())
 {
     string port = Environment.GetEnvironmentVariable("PORT") ?? "6000";
