@@ -90,7 +90,7 @@ public class ProcessesController : ControllerBase
                     Id = a.Id,
                     Name = a.Name,
                     Description = a.Description,
-                    ScpoeId = a.ScopeId,
+                    ScopeId = a.ScopeId,
                 }).ToList()
             };
         }
@@ -246,7 +246,7 @@ public class ProcessesController : ControllerBase
                 Id = a.Id,
                 Name = a.Name,
                 Description = a.Description,
-                ScpoeId = a.ScopeId,
+                ScopeId = a.ScopeId,
             }).ToList()
         };
 
@@ -367,7 +367,7 @@ public class ProcessesController : ControllerBase
                     Id = ability.Id,
                     Name = ability.Name,
                     Description = ability.Description,
-                    ScpoeId = ability.ScopeId,
+                    ScopeId = ability.ScopeId,
                 }).ToList(),
             },
             Users = process.Users.Select(user => new UserListDto
