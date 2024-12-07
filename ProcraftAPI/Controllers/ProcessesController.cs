@@ -342,6 +342,23 @@ public class ProcessesController : ControllerBase
             });
         }
 
+        ScopeDto? Scope = null;
+
+        if (process.Scope != null)
+        {
+            Scope = new ScopeDto
+            {
+                Id = process.Scope.Id,
+                Abilities = process.Scope.Abilities.Select(ability => new ScopeAbilityDto
+                {
+                    Id = ability.Id,
+                    Name = ability.Name,
+                    Description = ability.Description,
+                    ScopeId = ability.ScopeId,
+                }).ToList(),
+            };
+        }
+
         var processDto = new ProcessDto
         {
             Id = process.Id,
@@ -359,17 +376,7 @@ public class ProcessesController : ControllerBase
                 Email = process.Manager.Email,
                 ProfileImage = process.Manager.ProfileImage,
             },
-            Scope = new ScopeDto
-            {
-                Id = process.Scope.Id,
-                Abilities = process.Scope.Abilities.Select(ability => new ScopeAbilityDto
-                {
-                    Id = ability.Id,
-                    Name = ability.Name,
-                    Description = ability.Description,
-                    ScopeId = ability.ScopeId,
-                }).ToList(),
-            },
+            Scope = Scope,
             Users = process.Users.Select(user => new UserListDto
             {
                 Id = user.Id,
