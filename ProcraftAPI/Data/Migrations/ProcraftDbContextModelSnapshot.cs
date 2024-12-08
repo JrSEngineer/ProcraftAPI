@@ -353,6 +353,9 @@ namespace ProcraftAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("SendedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("VerificationCode")
                         .IsRequired()
                         .HasColumnType("text");

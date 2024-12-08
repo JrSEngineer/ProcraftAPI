@@ -291,11 +291,26 @@ public class AuthenticationController : ControllerBase
                 });
             }
 
+            var accountRecoveryTrial = await _context.Recovery
+                .Where(r => r.RecoveryEmail == userAccount.Email && r.CodeUsedInPastOperation == false)
+                .FirstOrDefaultAsync();
+
+            var invalidRequestTimeToCodeSending = accountRecoveryTrial != null && (DateTime.UtcNow - accountRecoveryTrial.SendedAt).TotalMinutes < 5;
+
+            if (invalidRequestTimeToCodeSending)
+            {
+                return BadRequest(new
+                {
+                    Message = "Please, wait 5 minutes to request a new code."
+                });
+            }
+
             var accountRecovery = new AccountRecovery
             {
                 TransactionId = transactionId,
                 RecoveryEmail = userAccount.Email,
-                VerificationCode = _hashService.GenerateVerificationCode(6)
+                VerificationCode = _hashService.GenerateVerificationCode(6),
+                SendedAt = DateTime.UtcNow,
             };
 
             await _context.Recovery.AddAsync(accountRecovery);

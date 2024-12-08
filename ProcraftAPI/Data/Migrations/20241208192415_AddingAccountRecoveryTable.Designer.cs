@@ -12,7 +12,7 @@ using ProcraftAPI.Data.Context;
 namespace ProcraftAPI.Data.Migrations
 {
     [DbContext(typeof(ProcraftDbContext))]
-    [Migration("20241208191343_AddingAccountRecoveryTable")]
+    [Migration("20241208192415_AddingAccountRecoveryTable")]
     partial class AddingAccountRecoveryTable
     {
         /// <inheritdoc />
@@ -355,6 +355,9 @@ namespace ProcraftAPI.Data.Migrations
                     b.Property<string>("RecoveryEmail")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("SendedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("VerificationCode")
                         .IsRequired()
