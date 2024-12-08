@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,19 +11,19 @@ namespace ProcraftAPI.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "CodeUsedInPastOperation",
+            migrationBuilder.AddColumn<DateTime>(
+                name: "SendedAt",
                 table: "Recovery",
-                type: "boolean",
+                type: "timestamp with time zone",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "CodeUsedInPastOperation",
+                name: "SendedAt",
                 table: "Recovery");
         }
     }
