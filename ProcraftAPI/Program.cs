@@ -15,6 +15,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 var settings = builder.Configuration.GetSection("Procraft").Get<ProcraftSettings>();
 
+builder.Services.AddSingleton<IRestClient, RestClient>(servicesProvider =>
+{
+    var url = Environment.GetEnvironmentVariable("EMAIL_SENDER") ?? "";
+
+    var options = new RestClientOptions(url);
+
+    var client = new RestClient(options);
+
+    return client;
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("procraft-policy", builder =>
@@ -24,8 +35,6 @@ builder.Services.AddCors(options =>
                .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH");
     });
 });
-
-builder.Services.AddSingleton<IRestClient, RestClient>(servicesProvider => new RestClient());
 
 builder.Services.AddSingleton<EmailTemplateService>(servicesProvider => new EmailTemplateService());
 

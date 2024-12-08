@@ -18,6 +18,7 @@ namespace ProcraftAPI.Data.Context
         }
 
         public DbSet<ProcraftAuthentication> Authentication { get; set; }
+        public DbSet<AccountRecovery> Recovery { get; set; }
         public DbSet<ProcraftGroup> Group { get; set; }
         public DbSet<ProcraftUser> User { get; set; }
         public DbSet<UserAddress> Address { get; set; }
@@ -36,6 +37,8 @@ namespace ProcraftAPI.Data.Context
             builder.Entity<ProcraftGroup>().HasMany(g => g.Managers).WithOne().HasForeignKey(m => m.GroupId).OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ProcraftAuthentication>().HasKey(a => a.Email);
+
+            builder.Entity<AccountRecovery>().HasKey(a => a.TransactionId);
 
             builder.Entity<ProcraftUser>().HasOne(u => u.Authentication).WithOne(a => a.User).OnDelete(DeleteBehavior.Cascade);
 

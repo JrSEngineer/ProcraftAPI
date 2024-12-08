@@ -12,12 +12,10 @@ using ProcraftAPI.Interfaces;
 using ProcraftAPI.Security.Authentication;
 using RestSharp;
 using ProcraftAPI.Dtos.Authenticarion;
-using RestSharp.Authenticators;
-using System.Threading;
 using ProcraftAPI.Dtos.User.Manager;
 using ProcraftAPI.Services;
 using System.Net;
-using Microsoft.AspNetCore.Components.Forms;
+using System.Text.Json;
 
 namespace ProcraftAPI.Controllers;
 
@@ -274,11 +272,11 @@ public class AuthenticationController : ControllerBase
     }
 
     [HttpPost("send-recovery-code")]
-    public async Task<IActionResult> UpdatePassword([FromBody] RecoveryCodeEmailDto dto)
+    public async Task<IActionResult> SendRecoveryCode([FromBody] RecoveryCodeEmailDto dto)
     {
         try
         {
-            var emailSenderAPiUrl = Environment.GetEnvironmentVariable("EMAIL_SENDER") ?? "";
+            var transactionId = Guid.NewGuid();
 
             var userAccount = await _context.Authentication
                 .Where(a => a.Email == dto.Email)
@@ -293,27 +291,40 @@ public class AuthenticationController : ControllerBase
                 });
             }
 
-            var request = new RestRequest(emailSenderAPiUrl, method: Method.Post);
-
-            request.AddHeader("Content-Type", "application/json");
-
-            var emailContent = _templateService.SetHtmlTemplateValues(userAccount.User.FullName, "TKSDFHE");
-
-            var requestBody = new
+            var accountRecovery = new AccountRecovery
             {
-                SenderEmailAddress = "procraft@app.com",
+                TransactionId = transactionId,
+                RecoveryEmail = userAccount.Email,
+                VerificationCode = _hashService.GenerateVerificationCode(6)
+            };
+
+            await _context.Recovery.AddAsync(accountRecovery);
+
+            await _context.SaveChangesAsync();
+
+            var request = new RestRequest();
+
+            request.AddHeader("content-type", "application/json");
+
+            var emailContent = _templateService.SetHtmlTemplateValues(userAccount.User.FullName, accountRecovery.VerificationCode);
+
+            var url = _client.Options.BaseUrl;
+
+            var requestBody = JsonSerializer.Serialize(new
+            {
+                SenderEmailAddress = "procraft.processes.manager@gmail.com",
                 ReceiverEmailAddress = userAccount.Email,
                 SenderName = "Procraft",
                 ReceiverName = userAccount.User.FullName,
                 EmailSubject = "Recuperação de Senha",
                 EmailContent = emailContent
-            };
+            });
 
             request.AddJsonBody(requestBody);
 
-            request.RequestFormat = DataFormat.Json;
+            request.Method = Method.Post;
 
-            var response = await _client.PostAsync(request);
+            var response = _client.Execute(request);
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -324,6 +335,49 @@ public class AuthenticationController : ControllerBase
             }
 
             return NoContent();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, $"{e.Message}");
+        }
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetAccountPassword([FromBody] RecoveryPasswordDto dto)
+    {
+        try
+        {
+            var verificationCode = dto.VerificationCode.ToUpper();
+
+            var recovery = await _context.Recovery
+                   .Where(r => r.VerificationCode == verificationCode)
+                   .FirstOrDefaultAsync();
+
+            if (recovery == null)
+            {
+                return NotFound(new
+                {
+                    Message = "Invalid verification code. Please, verify the sended code and try again."
+                });
+            };
+
+            bool validPassword = dto.Password == dto.ConfirmationPassword;
+
+            if (!validPassword)
+            {
+                return BadRequest(new
+                {
+                    Message = "The passswords has no match. Please, verify the sended passwords and try again."
+                });
+            }
+
+            var userAccount = await _context.Authentication.FindAsync(recovery.RecoveryEmail);
+
+            userAccount!.Password = _hashService.HashValue(dto.Password);
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Success!");
         }
         catch (Exception e)
         {

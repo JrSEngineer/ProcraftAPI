@@ -30,4 +30,5 @@ services:
         - PORT=7000
         - HTTPS_PORT=7001
         - EMAIL_SENDER=https://sender.up.railway.app/api/send
-  
+    volumes:
+        - .data/:/app/.data

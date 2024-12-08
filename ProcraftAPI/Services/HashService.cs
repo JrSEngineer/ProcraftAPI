@@ -76,13 +76,18 @@ namespace ProcraftAPI.Services
 
         public string GenerateVerificationCode(int codeSize)
         {
-            var codeBaseString = Guid.NewGuid().ToString().Split("-");
+            bool maxLimitExcedeed = codeSize > 32;
 
-            var generatedCode = codeBaseString
-                .First()
-                .Substring(0, codeSize);
+            var codeBaseString = Guid.NewGuid().ToString().Replace("-", "");
 
-            return generatedCode;
+            var generatedCode = codeBaseString.Substring(0, codeSize);
+
+            if (maxLimitExcedeed)
+            {
+                return codeBaseString;
+            }
+
+            return generatedCode.ToUpper();
         }
     }
 }
