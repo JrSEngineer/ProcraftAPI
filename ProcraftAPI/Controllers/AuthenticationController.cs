@@ -342,25 +342,39 @@ public class AuthenticationController : ControllerBase
         }
     }
 
+    [HttpPost("verify-code/{verificationCode}")]
+    public async Task<IActionResult> VerifyCode(string verificationCode)
+    {
+        verificationCode = verificationCode.ToUpper();
+
+        var recovery = await _context.Recovery
+               .Where(r => r.VerificationCode == verificationCode)
+               .FirstOrDefaultAsync();
+
+        if (recovery == null)
+        {
+            return NotFound(new
+            {
+                Message = "Invalid verification code. Please, verify the sended code and try again."
+            });
+        };
+
+        if (recovery.CodeUsedInPastOperation)
+        {
+            return BadRequest(new
+            {
+                Message = "Code already used in past operation. Please, provide a valid code."
+            });
+        };
+
+        return Ok();
+    }
+
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetAccountPassword([FromBody] RecoveryPasswordDto dto)
     {
         try
         {
-            var verificationCode = dto.VerificationCode.ToUpper();
-
-            var recovery = await _context.Recovery
-                   .Where(r => r.VerificationCode == verificationCode)
-                   .FirstOrDefaultAsync();
-
-            if (recovery == null)
-            {
-                return NotFound(new
-                {
-                    Message = "Invalid verification code. Please, verify the sended code and try again."
-                });
-            };
-
             bool validPassword = dto.Password == dto.ConfirmationPassword;
 
             if (!validPassword)
@@ -371,9 +385,23 @@ public class AuthenticationController : ControllerBase
                 });
             }
 
-            var userAccount = await _context.Authentication.FindAsync(recovery.RecoveryEmail);
+            var userAccount = await _context.Authentication.FindAsync(dto.RecoveryEmail);
 
             userAccount!.Password = _hashService.HashValue(dto.Password);
+
+            var recovery = await _context.Recovery
+             .Where(r => r.RecoveryEmail == dto.RecoveryEmail)
+             .FirstOrDefaultAsync();
+
+            if (recovery == null)
+            {
+                return NotFound(new
+                {
+                    Message = "Invalid e-mail. Please, verify the provided e-mail and try again."
+                });
+            };
+
+            recovery!.CodeUsedInPastOperation = true;
 
             await _context.SaveChangesAsync();
 
