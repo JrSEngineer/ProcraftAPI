@@ -4,7 +4,7 @@
     {
         public string SetHtmlTemplateValues(string user, string recoveryCode)
         {
-            var templatesPath = $"\\Templates\\index.html";
+            var templatesPath = $"/Templates/index.html";
 
             string htmlFile = File.ReadAllText(templatesPath) ?? "";
 
