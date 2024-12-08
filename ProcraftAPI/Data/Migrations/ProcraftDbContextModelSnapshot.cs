@@ -346,6 +346,9 @@ namespace ProcraftAPI.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("CodeUsedInPastOperation")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("RecoveryEmail")
                         .IsRequired()
                         .HasColumnType("text");

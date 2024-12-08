@@ -12,7 +12,7 @@ using ProcraftAPI.Data.Context;
 namespace ProcraftAPI.Data.Migrations
 {
     [DbContext(typeof(ProcraftDbContext))]
-    [Migration("20241208171259_AddingAccountRecoveryTable")]
+    [Migration("20241208191343_AddingAccountRecoveryTable")]
     partial class AddingAccountRecoveryTable
     {
         /// <inheritdoc />
@@ -348,6 +348,9 @@ namespace ProcraftAPI.Data.Migrations
                     b.Property<Guid>("TransactionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("CodeUsedInPastOperation")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("RecoveryEmail")
                         .IsRequired()
