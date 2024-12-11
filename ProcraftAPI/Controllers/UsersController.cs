@@ -85,7 +85,7 @@ public class UsersController : ControllerBase
                 Progress = s.Progress,
                 StartForecast = s.StartForecast,
                 FinishForecast = s.FinishForecast,
-                ProcessId = s.Id,
+                ProcessId = s.ProcessId,
             }).ToList(),
             Actions = user!.Actions!.Select(a => new ActionDto
             {
